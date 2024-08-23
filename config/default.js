@@ -1,4 +1,5 @@
-const app = require('./app');
+require('dotenv').config()
 module.exports = {
-  app
+  app: require('./app'),
+  db: require('./db'),
 };
