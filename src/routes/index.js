@@ -1,9 +1,14 @@
-const express = require('express')
+const express = require("express");
 const router = express.Router();
 const productsRouter = require("./products");
 const categoriesRouter = require("./categories");
 
-router.use('/products', productsRouter);
-router.use('/categories', categoriesRouter);
+const testController = require("../apps/controllers/api/test");
+
+router.use("/products", productsRouter);
+router.use("/categories", categoriesRouter);
+
+router.get("/test", testController.test);
+router.post("/test", testController.postTest);
 
 module.exports = router;
