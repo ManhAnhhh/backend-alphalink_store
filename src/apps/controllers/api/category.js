@@ -1,12 +1,26 @@
 const CategoryModel = require("../../models/Category");
 const ProductModel = require("../../models/Product");
+const config = require("config");
 
 const getCategories = async (req, res) => {
-  const total = await CategoryModel.find({}).countDocuments();
-  const categories = await CategoryModel.find({});
+  const query = {};
+  if (req.query.name) query.name = req.query.name;
+
+  const page = req.query.page || 1;
+  const limit = req.query.limit || config.get("app.default_limit_page");
+  const skip = page * limit - limit;
+
+  const total = await CategoryModel.find(query).countDocuments();
+  const categories = await CategoryModel.find(query).skip(skip).limit(limit);
+
   return res.status(200).json({
     status: "success",
     totalCategories: total,
+    totalPages: Math.ceil(total / limit),
+    filters: {
+      page: parseInt(page),
+      limit: parseInt(limit),
+    },
     data: categories,
   });
 };
@@ -20,14 +34,26 @@ const getCategory = async (req, res) => {
   });
 };
 
-const getProductByCategory = async (req, res) => {
+const getProductsByCategory = async (req, res) => {
   const id = req.params.id;
+
+  const page = req.query.page || 1;
+  const limit = req.query.limit || config.get("app.default_limit_page");
+  const skip = page * limit - limit;
+
   const total = await ProductModel.find({ category_id: id }).countDocuments();
-  const products = 
-        await ProductModel.find({ category_id: id }).sort({_id: -1,});
+  const products = await ProductModel.find({ category_id: id })
+    .sort({ _id: -1 })
+    .skip(skip)
+    .limit(limit);
   return res.status(200).json({
     status: "success",
     totalProducts: total,
+    totalPages: Math.ceil(total / limit),
+    filters: {
+      page: parseInt(page),
+      limit: parseInt(limit),
+    },
     data: products,
   });
 };
@@ -35,5 +61,5 @@ const getProductByCategory = async (req, res) => {
 module.exports = {
   getCategories,
   getCategory,
-  getProductByCategory,
+  getProductsByCategory,
 };
