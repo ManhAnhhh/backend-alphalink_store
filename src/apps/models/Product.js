@@ -42,6 +42,11 @@ const ProductSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-});
+  sold: {
+    type: Number,
+    default: 0,
+    required: true,
+  }
+}, {timestamps: true});
 const ProductModel = mongoose.model("Product", ProductSchema, "products");
 module.exports = ProductModel;

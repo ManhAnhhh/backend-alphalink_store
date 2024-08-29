@@ -1,7 +1,16 @@
 const express = require('express')
 const app = express()
+const cors = require('cors')
 const route = require("../routes/index");
 const config = require('config');
+
+// config cors
+const corsOptions = {
+  // origin: "*",
+  origin: "http://localhost:3000",
+  credentials: true, 
+};
+app.use(cors(corsOptions));
 
 // Truy cập file tĩnh trong express (phục vụ cho views)
 app.use("/assets", express.static(`${__dirname}/../public`));

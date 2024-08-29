@@ -6,11 +6,13 @@ const getCategories = async (req, res) => {
   const query = {};
   if (req.query.name) query.name = req.query.name;
 
+  const total = await CategoryModel.find(query).countDocuments();
+
   const page = req.query.page || 1;
-  const limit = req.query.limit || config.get("app.default_limit_page");
+  const limit = req.query.limit || total;
   const skip = page * limit - limit;
 
-  const total = await CategoryModel.find(query).countDocuments();
+  
   const categories = await CategoryModel.find(query).skip(skip).limit(limit);
 
   return res.status(200).json({
@@ -37,11 +39,13 @@ const getCategory = async (req, res) => {
 const getProductsByCategory = async (req, res) => {
   const id = req.params.id;
 
+  const total = await ProductModel.find({ category_id: id }).countDocuments();
+
   const page = req.query.page || 1;
-  const limit = req.query.limit || config.get("app.default_limit_page");
+  const limit = req.query.limit || total;
   const skip = page * limit - limit;
 
-  const total = await ProductModel.find({ category_id: id }).countDocuments();
+  
   const products = await ProductModel.find({ category_id: id })
     .sort({ _id: -1 })
     .skip(skip)

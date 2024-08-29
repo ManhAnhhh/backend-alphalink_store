@@ -7,11 +7,13 @@ const getProducts = async (req, res) => {
   if (is_stock) query.is_stock = is_stock;
   if (is_featured) query.is_feature = is_featured;
 
+  const total = await ProductModel.find(query).countDocuments();
+
   const page = req.query.page || 1;
-  const limit = req.query.limit || config.get("app.default_limit_page");
+  const limit = req.query.limit || total;
   const skip = page * limit - limit;
 
-  const total = await ProductModel.find(query).countDocuments();
+  
   const products = await ProductModel.find(query).skip(skip).limit(limit);
   return res.status(200).json({
     status: "success",
