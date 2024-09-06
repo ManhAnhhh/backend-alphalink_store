@@ -1,6 +1,7 @@
 const ProductModel = require("../../models/Product");
 const CommentModel = require("../../models/Comment");
 const config = require("config");
+const CategoryModel = require("../../models/Category");
 const getProducts = async (req, res) => {
   const query = {};
   const { is_stock, is_featured } = req.query;
@@ -13,7 +14,6 @@ const getProducts = async (req, res) => {
   const limit = req.query.limit || total;
   const skip = page * limit - limit;
 
-  
   const products = await ProductModel.find(query).skip(skip).limit(limit);
   return res.status(200).json({
     status: "success",
@@ -37,6 +37,46 @@ const getProductByID = async (req, res) => {
   });
 };
 
+const getProductsByCategoryName = async (req, res) => {
+  const { id } = req.params;
+  let productsByCategoryName = [];
+  let results = [];
+  let total = 0;
+  const products = await ProductModel.find({});
+
+  const categories = await CategoryModel.find({
+    parent_id: id,
+  });
+  // kiểm tra xem id truyền vào có là cha của category khác không
+  // nếu phải thì phải render ra products của các category con
+  // nếu không thì render ra tất cả products của category đó
+  if (categories.length > 0) {
+    productsByCategoryName = categories.map((category) =>
+      products.filter((product) => {
+        if (product.category_id == category._id.toString()) total++;
+        return product.category_id == category._id.toString();
+      })
+    );
+  } else {
+    productsByCategoryName = await ProductModel.find({ category_id: id });
+    total = productsByCategoryName.length;
+  }
+
+  productsByCategoryName.forEach((item) => {
+    if (Array.isArray(item)) {
+      results.push(...item);
+      return;
+    }
+    results.push(item);
+  });
+
+  return res.status(200).json({
+    status: "success",
+    total: total,
+    data: results,
+  });
+};
+
 const getCommentsByIdProduct = async (req, res) => {
   const id = req.params.id;
 
@@ -50,7 +90,9 @@ const getCommentsByIdProduct = async (req, res) => {
 
   const comments = await CommentModel.find({
     product_id: id,
-  }).skip(skip).limit(limit);
+  })
+    .skip(skip)
+    .limit(limit);
   return res.status(200).json({
     status: "success",
     totalComments: total,
@@ -66,5 +108,6 @@ const getCommentsByIdProduct = async (req, res) => {
 module.exports = {
   getProducts,
   getProductByID,
+  getProductsByCategoryName,
   getCommentsByIdProduct,
 };
