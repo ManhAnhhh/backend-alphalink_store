@@ -17,45 +17,50 @@ exports.getCustomers = async (req, res) => {
     },
     data: customers,
   });
-}
+};
 
 exports.registerCustomer = async (req, res) => {
   try {
     const { fullName, email, phone, password } = req.body;
 
-    const customer = await CustomerModel.findOne({email});
-    if (customer) return res.status(400).json({
-      status: "error",
-      message: "Email already exists",
-    })
+    const customer = await CustomerModel.findOne({ email });
+    if (customer)
+      return res.status(400).json({
+        status: "error",
+        message: "Email already exists",
+      });
 
-    const isPhoneExist = await CustomerModel.findOne({phone});
-    if (isPhoneExist) return res.status(400).json({
-      status: "error",
-      message: "Phone already exists",
-    })
+    const isPhoneExist = await CustomerModel.findOne({ phone });
+    if (isPhoneExist)
+      return res.status(400).json({
+        status: "error",
+        message: "Phone already exists",
+      });
 
     await new CustomerModel({
-      fullName, email, phone, password
+      fullName,
+      email,
+      phone,
+      password,
     }).save();
 
     return res.status(201).json({
       status: "success",
       message: "Registered successfully",
     });
-  }catch(err) {
+  } catch (err) {
     return res.status(500).json({
       status: "error",
       message: "Server Error",
-      data: err
+      data: err,
     });
   }
-}
+};
 
 exports.loginCustomer = async (req, res) => {
   try {
-    const {email, password} = req.body;
-    const customer = await CustomerModel.findOne({email});
+    const { email, password } = req.body;
+    const customer = await CustomerModel.findOne({ email });
     if (!customer) {
       return res.status(401).json({
         status: "error",
@@ -75,15 +80,15 @@ exports.loginCustomer = async (req, res) => {
         id: customer._id,
         fullName: customer.fullName,
         email: customer.email,
-        phone: customer.phone
-      }
+        phone: customer.phone,
+        cart: customer.cart,
+      },
     });
-  }
-  catch(err){
+  } catch (err) {
     return res.status(500).json({
       status: "error",
       message: "Server Error",
-      data: err
+      data: err,
     });
   }
-}
+};
