@@ -10,5 +10,5 @@ router.post(
   "/customer/:customerId/add-to-cart/:productId",
   CartController.addToCart
 );
-
+router.post("/customer/:customerId/update-cart", CartController.updateCart);
 module.exports = router;

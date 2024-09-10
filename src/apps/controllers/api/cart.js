@@ -1,8 +1,7 @@
 const CustomerModel = require("../../models/Customer");
 exports.deleteProductInCart = async (req, res) => {
   const { customerId, productId } = req.params;
-  const {colorIndex} = req.body;
-  console.log(colorIndex);
+  const { colorIndex } = req.body;
   const customer = await CustomerModel.findById(customerId);
 
   if (!customer)
@@ -15,12 +14,10 @@ exports.deleteProductInCart = async (req, res) => {
       status: "error",
       message: "ProductId not found",
     });
-    console.log(customer.cart);
   const isProduct = customer.cart.some(
     (product) =>
       product.prd_id === productId && product.colorIndex == colorIndex
   );
-  console.log(isProduct);
   if (!isProduct) {
     return res.status(404).json({
       status: "error",
@@ -33,7 +30,7 @@ exports.deleteProductInCart = async (req, res) => {
     { new: true } // Trả về đối tượng user đã được cập nhật
   );
   return res.status(200).json({
-    status: "delete successful",
+    status: "success",
     message: "Product removed from cart successfully",
     data: result.cart,
   });
@@ -63,7 +60,7 @@ exports.addToCart = async (req, res) => {
       });
     }
     const cart = customer.cart;
-    
+
     // check có phải sp đầu tiên trong giỏ hàng không
     if (customer.cart.length == 0) {
       result = await CustomerModel.findByIdAndUpdate(
@@ -73,6 +70,7 @@ exports.addToCart = async (req, res) => {
       );
       return res.status(200).json({
         status: "success",
+        message: "create cart successfully",
         data: result.cart.reverse(),
       });
     }
@@ -100,6 +98,7 @@ exports.addToCart = async (req, res) => {
 
     return res.status(200).json({
       status: "success",
+      message: "add to cart successfully",
       data: result.cart.reverse(),
     });
   } catch (error) {
@@ -107,6 +106,36 @@ exports.addToCart = async (req, res) => {
       status: "error",
       message: "Server Error",
       data: error,
+    });
+  }
+};
+
+exports.updateCart = async (req, res) => {
+  try {
+    const { cart } = req.body;
+    const { customerId } = req.params;
+    if (!cart) {
+      return res.status(400).json({
+        status: "error",
+        message: "Cart is required",
+      });
+    }
+    const result = await CustomerModel.findByIdAndUpdate(
+      customerId,
+      { cart }, // Cập nhật field 'cart'
+      { new: true }
+    );
+
+    return res.status(200).json({
+      status: "success",
+      message: "update cart successfully",
+      data: result.cart,
+    });
+  } catch (err) {
+    return res.status(500).json({
+      status: "error",
+      message: "Server Error",
+      data: err,
     });
   }
 };
