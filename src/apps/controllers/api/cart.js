@@ -105,7 +105,7 @@ exports.addToCart = async (req, res) => {
     return res.status(500).json({
       status: "error",
       message: "Server Error",
-      data: error,
+      data: err.message || err,
     });
   }
 };
@@ -135,7 +135,7 @@ exports.updateCart = async (req, res) => {
     return res.status(500).json({
       status: "error",
       message: "Server Error",
-      data: err,
+      data: err.message || err,
     });
   }
 };

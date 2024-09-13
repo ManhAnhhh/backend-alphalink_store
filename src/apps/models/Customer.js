@@ -71,6 +71,43 @@ const CustomerSchema = new mongoose.Schema(
         colorIndex: {
           type: Number,
           required: true,
+          default: 0,
+        },
+      },
+    ],
+    heart: [
+      {
+        prd_id: {
+          type: String,
+          required: true,
+        },
+        price: {
+          type: Number,
+          required: true,
+        },
+        discount: {
+          type: Number,
+          required: false,
+        },
+        name: {
+          type: String,
+          required: true,
+        },
+        img: [
+          {
+            type: String,
+            required: true,
+          },
+        ],
+        color: [
+          {
+            type: String,
+            required: true,
+          },
+        ],
+        is_stock: {
+          type: Boolean,
+          required: true,
         },
       },
     ],

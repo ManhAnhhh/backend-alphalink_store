@@ -52,7 +52,7 @@ exports.registerCustomer = async (req, res) => {
     return res.status(500).json({
       status: "error",
       message: "Server Error",
-      data: err,
+      data: err.message || err,
     });
   }
 };
@@ -82,13 +82,14 @@ exports.loginCustomer = async (req, res) => {
         email: customer.email,
         phone: customer.phone,
         cart: customer.cart,
+        heart: customer.heart,
       },
     });
   } catch (err) {
     return res.status(500).json({
       status: "error",
       message: "Server Error",
-      data: err,
+      data: err.message || err,
     });
   }
 };
