@@ -1,39 +1,47 @@
 const CustomerModel = require("../../models/Customer");
 exports.deleteProductInCart = async (req, res) => {
-  const { customerId, productId } = req.params;
-  const { colorIndex } = req.body;
-  const customer = await CustomerModel.findById(customerId);
+  try {
+    const { customerId, productId } = req.params;
+    const { colorIndex } = req.body;
+    const customer = await CustomerModel.findById(customerId);
 
-  if (!customer)
-    return res.status(404).json({
-      status: "error",
-      message: "Customer not found",
+    if (!customer)
+      return res.status(404).json({
+        status: "error",
+        message: "Customer not found",
+      });
+    if (!productId)
+      return res.status(404).json({
+        status: "error",
+        message: "ProductId not found",
+      });
+    const isProduct = customer.cart.some(
+      (product) =>
+        product.prd_id === productId && product.colorIndex == colorIndex
+    );
+    if (!isProduct) {
+      return res.status(404).json({
+        status: "error",
+        message: "Product not found in cart",
+      });
+    }
+    const result = await CustomerModel.findByIdAndUpdate(
+      customerId,
+      { $pull: { cart: { prd_id: productId, colorIndex: colorIndex } } }, // Sử dụng $pull để xóa sản phẩm bằng productId
+      { new: true } // Trả về đối tượng user đã được cập nhật
+    );
+    return res.status(200).json({
+      status: "success",
+      message: "Product removed from cart successfully",
+      data: result.cart,
     });
-  if (!productId)
-    return res.status(404).json({
+  } catch (err) {
+    return res.status(500).json({
       status: "error",
-      message: "ProductId not found",
-    });
-  const isProduct = customer.cart.some(
-    (product) =>
-      product.prd_id === productId && product.colorIndex == colorIndex
-  );
-  if (!isProduct) {
-    return res.status(404).json({
-      status: "error",
-      message: "Product not found in cart",
+      message: "Server Error",
+      data: err.message || err,
     });
   }
-  const result = await CustomerModel.findByIdAndUpdate(
-    customerId,
-    { $pull: { cart: { prd_id: productId, colorIndex: colorIndex } } }, // Sử dụng $pull để xóa sản phẩm bằng productId
-    { new: true } // Trả về đối tượng user đã được cập nhật
-  );
-  return res.status(200).json({
-    status: "success",
-    message: "Product removed from cart successfully",
-    data: result.cart,
-  });
 };
 
 exports.addToCart = async (req, res) => {
@@ -71,7 +79,7 @@ exports.addToCart = async (req, res) => {
       return res.status(200).json({
         status: "success",
         message: "create cart successfully",
-        data: result.cart.reverse(),
+        data: result.cart,
       });
     }
 
@@ -99,9 +107,9 @@ exports.addToCart = async (req, res) => {
     return res.status(200).json({
       status: "success",
       message: "add to cart successfully",
-      data: result.cart.reverse(),
+      data: result.cart,
     });
-  } catch (error) {
+  } catch (err) {
     return res.status(500).json({
       status: "error",
       message: "Server Error",
@@ -129,6 +137,39 @@ exports.updateCart = async (req, res) => {
     return res.status(200).json({
       status: "success",
       message: "update cart successfully",
+      data: result.cart,
+    });
+  } catch (err) {
+    return res.status(500).json({
+      status: "error",
+      message: "Server Error",
+      data: err.message || err,
+    });
+  }
+};
+
+exports.deleteManyProductInCart = async (req, res) => {
+  try {
+    const data = req.body;
+    const { customerId } = req.params;
+    const result = await CustomerModel.findByIdAndUpdate(
+      customerId,
+      {
+        $pull: {
+          cart: {
+            $or: data.map((item) => ({
+              prd_id: item.prd_id,
+              colorIndex: item.colorIndex,
+            })),
+          },
+        },
+      },
+      // xóa xong tạo ra 1 đối tượng mới được update
+      { new: true }
+    );
+    return res.status(200).json({
+      status: "success",
+      message: "delete items in cart successfully",
       data: result.cart,
     });
   } catch (err) {
