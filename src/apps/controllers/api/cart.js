@@ -82,15 +82,18 @@ exports.addToCart = async (req, res) => {
         data: result.cart,
       });
     }
-
-    const isProduct = cart.filter((product) => product.prd_id === prd_id);
-    const isSameColor = isProduct.some(
-      (product) => product.colorIndex === colorIndex
+    const isProduct = cart.some(
+      (product) =>
+        product.prd_id === prd_id && product.colorIndex === colorIndex
     );
-
-    if (isProduct.length > 0 && isSameColor) {
+    if (isProduct) {
       result = await CustomerModel.findOneAndUpdate(
-        { _id: customerId, "cart.prd_id": prd_id }, // Tìm sản phẩm trong giỏ hàng
+        {
+          _id: customerId, // ID của khách hàng
+          cart: {
+            $elemMatch: { prd_id: prd_id, colorIndex: colorIndex },
+          },
+        }, // Tìm sản phẩm trong giỏ hàng
         {
           $inc: { "cart.$.qty": qty }, // Tăng số lượng sản phẩm
         },
