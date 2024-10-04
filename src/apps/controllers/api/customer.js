@@ -81,6 +81,7 @@ exports.loginCustomer = async (req, res) => {
         fullName: customer.fullName,
         email: customer.email,
         phone: customer.phone,
+        address: customer.address,
         cart: customer.cart,
         heart: customer.heart,
       },

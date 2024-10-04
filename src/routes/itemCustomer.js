@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const CartController = require("../apps/controllers/api/cart");
 const HeartController = require("../apps/controllers/api/heart");
+const OrderController = require("../apps/controllers/api/order");
 
 // cart routes
 router.post(
@@ -28,4 +29,8 @@ router.post(
   "/:customerId/delete-many-heart-item",
   HeartController.deleteManyProductInHeart
 );
+
+// order
+router.post("/:customerId/order", OrderController.order);
+
 module.exports = router;

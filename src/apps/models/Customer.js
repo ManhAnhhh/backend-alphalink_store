@@ -112,7 +112,7 @@ const CustomerSchema = new mongoose.Schema(
       },
     ],
   },
-  { timeseries: true }
+  { timestamps: true }
 );
 
 const CustomerModel = mongoose.model("Customers", CustomerSchema, "customers");

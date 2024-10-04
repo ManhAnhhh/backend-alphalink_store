@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Confirm to buy products</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+      }
+      p {
+        margin-top: 4px;
+        margin-bottom: 4px;
+      }
+      table {
+        border-collapse: collapse;
+        margin: 8px 0;
+      }
+      table td,
+      table th {
+        padding: 8px;
+      }
+      table thead {
+        border: 1px solid #5497fe;
+        background-color: #5497fe;
+        color: #fff;
+      }
+
+      table td {
+        border: 1px solid #d6d7d7;
+      }
+      table tr td:first-of-type,
+      table tr td:last-of-type {
+        border-left: none !important;
+        border-right: none !important;
+      }
+      .container {
+        padding: 4px 8px;
+      }
+      .title {
+        text-align: center;
+        padding: 12px 0;
+        border-bottom: 1px solid #d6d7d7;
+      }
+      .text-center {
+        text-align: center;
+      }
+      .info {
+        display: flex;
+      }
+      .info .color {
+        margin-left: 16px;
+        margin-right: 16px;
+      }
+      .price {
+        color: #db1e25;
+        text-align: center;
+        font-weight: bold;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container" style="border: 1px solid #d6d7d7; ">
+      <div class="customer">
+        <h2 class="title">
+          Confirm purchase at Alphalink Store
+        </h2>
+        <p>Customer: <b><%= fullName %></b></p>
+        <p>Email: <b><%= email %></b></p>
+        <p>Phone: <b><%= phone %></b></p>
+        <p>Address: <b><%= address %></b></p>
+        <p>Note: <b><%= note %></b></p>
+        <p>Voucher: <b><%= voucher %></b></p>
+      </div>
+      <table class="items" style="width: 100%;">
+        <thead>
+          <tr>
+            <th>
+              Products
+            </th>
+            <th>
+              Quantity
+            </th>
+            <th>
+              Price
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <% for(const item of items) { %>
+          <tr>
+            <td>
+              <div>
+                <%= item.name %>
+              </div>
+              <div class="info">
+                <p class="discount text-secondary me-2">
+                  <% if (item.discount) { %>
+                  <del style="color: rgba(108, 117, 125, 1);"
+                    >$ <%= item.price %></del
+                  >
+                  <% } %>
+                </p>
+                <p
+                  class="price text-danger fw-bold me-4"
+                  style="padding: 0 8px;"
+                >
+                  $ <%= item.price - (item.price * item.discount ) / 100 %>
+                </p>
+                <p class="color">
+                  Color: <b><%= item.color[item.colorIndex] %></b>
+                </p>
+              </div>
+            </td>
+            <td class="text-center">
+              <%= item.qty %>
+            </td>
+            <td class="price">
+              $ <%= item.price - (item.price * item.discount ) / 100 %>
+            </td>
+          </tr>
+          <% } %>
+
+          <tr class="total">
+            <td colspan="2"></td>
+
+            <td class="price" style="text-align: left !important;">
+              Total: $ <%= totalPrice %>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p class="thanks">
+        Thank you for purchasing from our Shop, the delivery department will
+        contact you to confirm within 5 minutes of successful order and deliver
+        the goods to you within 24 hours at the latest.
+      </p>
+    </div>
+  </body>
+</html>
