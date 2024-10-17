@@ -1,4 +1,7 @@
 const CustomerModel = require("../../models/Customer");
+const fs = require("fs");
+const config = require("config");
+const path = require("path");
 exports.getCustomers = async (req, res) => {
   const total = await CustomerModel.find().countDocuments();
 
@@ -17,6 +20,87 @@ exports.getCustomers = async (req, res) => {
     },
     data: customers,
   });
+};
+
+exports.getCustomerByID = async (req, res) => {
+  try {
+    const id = req.params.customerId;
+    const customer = await CustomerModel.findById(id);
+    if (!customer)
+      return res.status(404).json({
+        status: "error",
+        message: "Customer not found",
+      });
+    return res.status(200).json({
+      status: "success",
+      data: customer,
+    });
+  } catch (err) {
+    return res.status(500).json({
+      status: "error",
+      message: "Server Error",
+      data: err.message || err,
+    });
+  }
+};
+
+exports.updateCustomer = async (req, res) => {
+  try {
+    const id = req.params.customerId;
+    const { fullName, email, phone, address, sex, birthDay } = req.body;
+    const thumbnail = req.file;
+    const currentCustomer = await CustomerModel.findById(id);
+    const customers = await CustomerModel.find();
+    let picture = currentCustomer.picture;
+    const isEmailExist = customers.some(
+      (customer) => customer.email === email && customer._id != id
+    );
+    const isPhoneExist = customers.some(
+      (customer) => customer.phone === phone && customer._id != id
+    );
+
+    if (email != currentCustomer.email && isEmailExist)
+      return res.status(400).json({
+        status: "error",
+        message: "Email already exists",
+      });
+    if (phone != currentCustomer.phone && isPhoneExist)
+      return res.status(400).json({
+        status: "error",
+        message: "Phone already exists",
+      });
+
+    
+    // xử lý ảnh
+    if (thumbnail) {
+      // xóa ảnh cũ đi để dọn database
+      if (!["default.jpg", "linhh.jpg"].includes(picture))
+        fs.unlinkSync(
+          path.join(
+            config.get("app.static_folder"),
+            `uploads/customers/${picture}`
+          )
+        );
+
+      picture = thumbnail.filename;
+    }
+    const updateCustomer = await CustomerModel.findByIdAndUpdate(
+      id,
+      { $set: { fullName, email, phone, address, sex, birthDay, picture } },
+      { new: true }
+    );
+
+    return res.status(200).json({
+      status: "success",
+      data: updateCustomer,
+    });
+  } catch (err) {
+    return res.status(500).json({
+      status: "error",
+      message: "Server Error",
+      data: err.message || err,
+    });
+  }
 };
 
 exports.registerCustomer = async (req, res) => {

@@ -1,6 +1,5 @@
 const CategoryModel = require("../../models/Category");
 const ProductModel = require("../../models/Product");
-const config = require("config");
 
 const getCategories = async (req, res) => {
   const query = {};

@@ -28,7 +28,7 @@ const CustomerSchema = new mongoose.Schema(
     },
     birthDay: {
       type: String,
-      default: "01/01/2000",
+      default: "2000-01-01",
     },
     picture: {
       type: String,

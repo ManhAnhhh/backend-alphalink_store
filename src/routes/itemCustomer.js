@@ -3,6 +3,17 @@ const router = express.Router();
 const CartController = require("../apps/controllers/api/cart");
 const HeartController = require("../apps/controllers/api/heart");
 const OrderController = require("../apps/controllers/api/order");
+const CustomerController = require("../apps/controllers/api/customer");
+const { uploadCustomers } = require("../apps/middlewares/upload");
+
+router.get("/:customerId", CustomerController.getCustomerByID);
+router.post(
+  "/:customerId/update",
+  // thumbnail là tên key đc đặt bên react ở profiles.js. gửi dưới dạng key value từ client lên server
+  // và server lấy có req.files có thumbnail
+  uploadCustomers.single("thumbnail"),
+  CustomerController.updateCustomer
+);
 
 // cart routes
 router.post(
