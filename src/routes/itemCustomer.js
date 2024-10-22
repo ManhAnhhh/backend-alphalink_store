@@ -44,5 +44,6 @@ router.post(
 // order
 router.post("/:customerId/order", OrderController.order);
 router.get("/:customerId/orderDetails", OrderController.getOrdersByCustomerID);
+router.post("/:customerId/cancelOrder", OrderController.cancelOrder);
 
 module.exports = router;

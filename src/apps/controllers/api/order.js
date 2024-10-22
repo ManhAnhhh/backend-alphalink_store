@@ -159,3 +159,52 @@ exports.getOrdersByCustomerID = async (req, res) => {
     });
   }
 };
+
+exports.cancelOrder = async (req, res) => {
+  try {
+    const { customerId } = req.params;
+    const { orderId, cancelAction } = req.body;
+    
+    // console.log(cancelAction); nếu không truyên cacelAcion vào body thì nó là undefined
+    // mặc định lý do hủy là do người mua, nếu ng bán muốn hủy thì truyền thêm vào body cancelAction = 1
+
+    let reason = "Canceled by you";
+    if (cancelAction == 1) {
+      reason = "Canceled by seller";
+    }
+
+    if (!customerId) {
+      return res.status(400).json({
+        status: "error",
+        message: "Customer ID is required",
+      });
+    }
+    if (!orderId) {
+      return res.status(400).json({
+        status: "error",
+        message: "Order ID is required",
+      });
+    }
+
+    await OrderModel.findOneAndUpdate(
+      {
+        customer_id: customerId,
+        _id: orderId,
+      },
+      {
+        $set: { status: "canceled", reasonCanceled: reason },
+      }
+    );
+
+    return res.status(200).json({
+      status: "success",
+      message: "Order canceled successfully",
+    });
+  } catch (err) {
+    return res.status(500).json({
+      status: "error",
+      message: "Server Error",
+      data: err.message || err,
+    });
+  }
+};
