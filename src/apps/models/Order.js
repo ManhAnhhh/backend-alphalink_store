@@ -30,6 +30,10 @@ const OrderSchema = new mongoose.Schema(
       type: String,
       default: "",
     },
+    note: {
+      type: String,
+      default: "",
+    },
     items: [
       {
         prd_id: {

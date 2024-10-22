@@ -1,6 +1,5 @@
 const OrderModel = require("../../models/Order");
 const ProductModel = require("../../models/Product");
-const config = require("config");
 const transporter = require("../../../helper/transporter");
 const path = require("path");
 const ejs = require("ejs");
@@ -19,7 +18,6 @@ exports.order = async (req, res) => {
       note,
       totalPrice,
     } = req.body;
-    console.log(email);
     // items truyen sang chi co: prd_id, colorIndex, qty
     // nen can dung lodash de tao ra newItems co day du thong tin truyen sang ejs
 
@@ -85,6 +83,73 @@ exports.order = async (req, res) => {
       status: "success",
       message: "Created Order Successfully",
       newItems,
+    });
+  } catch (err) {
+    return res.status(500).json({
+      status: "error",
+      message: "Server Error",
+      data: err.message || err,
+    });
+  }
+};
+
+exports.getOrdersByCustomerID = async (req, res) => {
+  try {
+    const { customerId } = req.params;
+
+    //? .lean() thì kết quả trả về sẽ là đối tượng đơn giản, không có các thuộc tính đặc biệt như _doc hoặc __v.
+    const orders = await OrderModel.find({
+      customer_id: customerId,
+    })
+      .sort({
+        createdAt: -1,
+      })
+      .lean();
+    const items = orders.map((item) => item.items);
+
+    //! dùng 2 lần lặp
+    // let prd_id = [];
+    // items.forEach((i) => {
+    //   i.forEach((item) => {
+    //     prd_id.push(item.prd_id);
+    //   });
+    // });
+    // prd_id = [...new Set(prd_id)];
+    //! dùng flatMap giúp làm phẳng mảng con 1 cấp
+    const prd_id = [
+      ...new Set(items.flatMap((i) => i.map((item) => item.prd_id))),
+    ];
+
+    const products = await ProductModel.find({ _id: { $in: prd_id } });
+
+    const newItems = items.map((item) =>
+      item.map((i) => {
+        const product = products.find((p) => p._id.toString() === i.prd_id);
+
+        return {
+          prd_id: i.prd_id,
+          img: product?.img[0],
+          name: product?.name,
+          qty: i.qty,
+          color: product.color[i.colorIndex],
+          price:
+            i.qty *
+            (product?.price - (product?.price * product?.discount) / 100),
+        };
+      })
+    );
+
+    //? nếu orders ở trên đc truy xuất ra từ mongoose mà k có .lean() thì khi destructuring e
+    //? sẽ có thêm các key như _doc, _v.
+    //? Đây là những thuộc tính nội bộ mà Mongoose sử dụng
+    const newOrders = orders.map((e, i) => ({
+      ...e,
+      items: newItems[i],
+    }));
+
+    return res.status(200).json({
+      status: "success",
+      data: newOrders,
     });
   } catch (err) {
     return res.status(500).json({
