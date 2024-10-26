@@ -16,7 +16,8 @@ exports.order = async (req, res) => {
       items,
       voucher,
       note,
-      totalPrice,
+      deleveryPrice,
+      totalPriceInCart,
     } = req.body;
     // items truyen sang chi co: prd_id, colorIndex, qty
     // nen can dung lodash de tao ra newItems co day du thong tin truyen sang ejs
@@ -49,15 +50,17 @@ exports.order = async (req, res) => {
       email,
       phone,
       address,
-      totalPrice,
       voucher,
       note,
       items,
+      deleveryPrice,
+      totalPriceInCart,
     };
     await OrderModel(data).save();
 
     //? req.app.get("views"): lấy đường dẫn đến thư mục chứa các view (các file template EJS)
     //? từ cấu hình set view trong app.js
+    const totalPrice = deleveryPrice + totalPriceInCart;
     const html = await ejs.renderFile(
       path.join(req.app.get("views"), "api/mail.ejs"),
       {
@@ -68,6 +71,8 @@ exports.order = async (req, res) => {
         note,
         items: newItems,
         voucher,
+        deleveryPrice,
+        totalPriceInCart,
         totalPrice,
       }
     );
@@ -164,7 +169,7 @@ exports.cancelOrder = async (req, res) => {
   try {
     const { customerId } = req.params;
     const { orderId, cancelAction } = req.body;
-    
+
     // console.log(cancelAction); nếu không truyên cacelAcion vào body thì nó là undefined
     // mặc định lý do hủy là do người mua, nếu ng bán muốn hủy thì truyền thêm vào body cancelAction = 1
 

@@ -62,7 +62,7 @@
     </style>
   </head>
   <body>
-    <div class="container" style="border: 1px solid #d6d7d7; ">
+    <div class="container" style="border: 1px solid #d6d7d7;">
       <div class="customer">
         <h2 class="title">
           Confirm purchase at Alphalink Store
@@ -124,9 +124,19 @@
           <% } %>
 
           <tr class="total">
-            <td colspan="2"></td>
+            <td colspan="3" class="price" style="text-align: right !important;">
+              Total cost of goods: $ <%= totalPriceInCart %>
+            </td>
+          </tr>
 
-            <td class="price" style="text-align: left !important;">
+          <tr class="total">
+            <td colspan="3" class="price" style="text-align: right !important;">
+              Shipping fee: $ <%= deleveryPrice %>
+            </td>
+          </tr>
+
+          <tr class="total">
+            <td colspan="3" class="price" style="text-align: right !important;">
               Total: $ <%= totalPrice %>
             </td>
           </tr>

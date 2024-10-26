@@ -22,7 +22,12 @@ const OrderSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    totalPrice: {
+
+    deleveryPrice: {
+      type: Number,
+      required: true,
+    },
+    totalPriceInCart: {
       type: Number,
       required: true,
     },
