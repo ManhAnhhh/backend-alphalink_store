@@ -7,7 +7,10 @@ const config = require("config");
 // config cors
 const corsOptions = {
   // origin: "*",
-  origin: "http://localhost:3000",
+  origin: [
+    "http://localhost:3000",
+    "https://frontend-alphalink-store.vercel.app",
+  ],
   credentials: true,
 };
 app.use(cors(corsOptions));
