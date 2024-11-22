@@ -25,6 +25,10 @@ router.post(
   CartController.deleteManyProductInCart
 );
 router.post("/:customerId/add-to-cart/:productId", CartController.addToCart);
+router.post(
+  "/:customerId/add-many-items-to-cart/",
+  CartController.addManyItemsToCart
+);
 router.post("/:customerId/update-cart", CartController.updateCart);
 
 // heart items routes
