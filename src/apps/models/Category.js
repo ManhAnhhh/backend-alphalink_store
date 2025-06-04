@@ -8,6 +8,10 @@ const CategorySchema = new mongoose.Schema({
   parent_id: {
     type: String,
   },
+  status: {
+    type: String,
+    default: 'active'
+  },
 });
 const CategoryModel = mongoose.model("Categories", CategorySchema, "categories");
 module.exports = CategoryModel;

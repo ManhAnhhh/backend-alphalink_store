@@ -1,0 +1,226 @@
+<%- include('../layout/head') %>
+
+<body id="page-top">
+  <!-- Page Wrapper -->
+  <div id="wrapper">
+    <!-- Sidebar -->
+    <%- include('../layout/sidebar') %>
+    <!-- End of Sidebar -->
+
+    <!-- Content Wrapper -->
+    <div id="content-wrapper" class="d-flex flex-column">
+      <!-- Main Content -->
+      <div id="content">
+        <!-- Topbar -->
+        <%- include('../layout/search') %>
+        <!-- End of Topbar -->
+
+        <!-- Begin Page Content -->
+        <div class="container-fluid">
+          <!-- Page Heading -->
+          <h3 class="h3 mb-2 text-gray-800">
+            Danh sách sản phẩm <span class="totalInactive">(<%= products.length %>)</span>
+          </h3>
+          <div class="card shadow mb-4">
+            <div class="card-header py-3 d-flex align-items-center justify-content-between">
+                <div>
+                  <a class="text-secondary" href="/admin/products">Tất cả sản phẩm <span class="totalActive">(<%= productsActive.length %>)</span></a>
+                  <span class="ml-1 mr-1 d-inline-block" style="width: 2px; height: 12px; background-color: #bdbdbd;"></span>
+                  <a href="/admin/products/remove">Thùng rác <span class="totalinActive">(<%= products.length %>)</span></a>
+                </div>
+            </div>
+            <div class="card-body">
+              <div class="table-responsive">
+                <table
+                  class="table table-bordered"
+                  id="dataTable"
+                  width="100%"
+                  cellspacing="0"
+                >
+                  <thead>
+                    <tr>
+                      <th>Sản phẩm</th>
+                      <th style="text-wrap: no-wrap;">Số lượng</th>
+                      <th>Giá tiền</th>
+                      <th>Đã bán</th>
+                      <th class="text-left">Danh mục</th>
+                      <th class="">Ngày tạo</th>
+                      <th class="">Ngày sửa</th>
+                      <th></th>
+                    </tr>
+                  </thead>
+
+                  <tbody>
+                    <% for(const product of products) {%>
+                    <tr>
+                      <td style="min-width: 250px;">
+                        <div class="d-flex gap-2 align-items-center">
+                          <img
+                            width="60"
+                            height="60"
+                            src="../uploads/products/<%=product.img[0]%> "
+                          />
+                          <div class="ml-3">
+                            <%=product.name%>
+                          </div>
+                        </div>
+                      </td>
+                      <td>
+                        <%=product.stock%>
+                      </td>
+                      <td>
+                        <%=formattedPriceVND(product.price)%>
+                      </td>
+                      <td>
+                        <%=product.sold%>
+                      </td>
+                      <td class="text-left">
+                        <%= capitalizeFirstLetter(product.category_info.name) %>
+                      </td>
+
+                      <td style="width: 115px; text-wrap: auto;">
+                        <%=formatDateToYYYYMMDD(product.createdAt)%>
+                      </td>
+
+                      <td style="width: 115px; text-wrap: auto;">
+                        <%=formatDateToYYYYMMDD(product.updatedAt)%>
+                      </td>
+
+                      <td class="form-group">
+                        <button
+                          class="btn btn-secondary btn-restore"
+                          data-id="<%=product._id%>"
+                        >
+                          <i class="fa-solid fa-reply"></i>
+                        </button>
+
+                        <button
+                          class="btn btn-danger btn-delete"
+                          data-id="<%=product._id%>"
+                        >
+                          <i class="fa-solid fa-trash-can"></i>
+                        </button>
+                      </td>
+                    </tr>
+
+                    <%}%>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- /.container-fluid -->
+      </div>
+      <!-- End of Main Content -->
+
+      <!-- Footer -->
+      <%- include('../layout/footer') %>
+      <!-- End of Footer -->
+    </div>
+    <!-- End of Content Wrapper -->
+  </div>
+  <!-- End of Page Wrapper -->
+
+  <%- include('../layout/script') %>
+</body>
+
+<script>
+  const restoreProduct = document.querySelectorAll(".btn-restore");
+  const del = document.querySelectorAll(".btn-delete");
+  restoreProduct.forEach((item) => {
+    item.addEventListener("click", function (e) {
+      const productId = this.getAttribute("data-id");
+
+      Swal.fire({
+        title: "Bạn muốn khôi phục sản phẩm này không?",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#d33",
+        cancelButtonColor: "#3085d6",
+        confirmButtonText: "Có",
+        cancelButtonText: "Không",
+      }).then((result) => {
+        if (result.isConfirmed) {
+          fetch(`/admin/products/restore/${productId}`, {
+            method: 'POST'
+          })
+          .then(res => res.json())
+          .then(data => {
+            if (data.success) {
+              $(".totalActive").each(function() {
+                $(this).text(`(${data.totalActive})`);
+              });
+
+              $(".totalInactive").each(function() {
+                $(this).text(`(${data.totalInactive})`);
+              });
+
+              Swal.fire({
+              toast: true,
+              position: "top",
+              icon: "success",
+              title: "Khôi phục thành công",
+              showConfirmButton: false,
+              timer: 3000,
+            });
+            e.target.closest("tr").remove(); // Xóa dòng sản phẩm khỏi bảng
+            }
+          })
+          .catch(err => {
+            Swal.fire('Lỗi', 'Không thể kết nối server', 'error');
+            console.log(err);
+          });
+        }
+      });
+    });
+  });
+  del.forEach((item) => {
+    item.addEventListener("click", function (e) {
+      const productId = this.getAttribute("data-id");
+      // console.log(productId);
+      Swal.fire({
+        title: "Bạn có chắc chắn muốn xóa?",
+        text:"Sản phẩm sẽ không thể khôi phục lại",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#d33",
+        cancelButtonColor: "#3085d6",
+        confirmButtonText: "Xóa",
+        cancelButtonText: "Hủy",
+      }).then((result) => {
+        if (result.isConfirmed) {
+          fetch(`/admin/products/delete/${productId}`, {
+            method: 'POST'
+          })
+          .then(res => res.json())
+          .then(data => {
+            if (data.success) {
+              $(".totalActive").each(function() {
+                $(this).text(`(${data.totalActive})`);
+              });
+
+              $(".totalInactive").each(function() {
+                $(this).text(`(${data.totalInactive})`);
+              });
+
+              Swal.fire({
+                toast: true,
+                position: "top",
+                icon: "success",
+                title: "Xóa thành công",
+                showConfirmButton: false,
+                timer: 3000,
+              });
+              e.target.closest("tr").remove(); // Xóa dòng sản phẩm khỏi bảng
+            }
+          })
+          .catch(err => {
+            Swal.fire('Lỗi', 'Không thể kết nối server', 'error');
+            console.log(err);
+          });
+        }
+      });
+    });
+  });
+</script>

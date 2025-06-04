@@ -7,6 +7,10 @@ const getProducts = async (req, res) => {
   const { is_stock, is_featured } = req.query;
   if (is_stock) query.is_stock = is_stock;
   if (is_featured) query.is_feature = is_featured;
+  query.status = 'active';
+
+  const activeCategories = await CategoryModel.find({ status: 'active' }, '_id');
+  const activeCategoryIds = activeCategories.map(cat => cat._id.toString());
 
   const total = await ProductModel.find(query).countDocuments();
 
@@ -14,7 +18,9 @@ const getProducts = async (req, res) => {
   const limit = req.query.limit || total;
   const skip = page * limit - limit;
 
-  const products = await ProductModel.find(query).skip(skip).limit(limit);
+  let products = await ProductModel.find(query).skip(skip).limit(limit);
+  products = products.filter(prod => activeCategoryIds.includes(prod.category_id.toString()));
+
   return res.status(200).json({
     status: "success",
     totalProducts: total,
@@ -30,8 +36,12 @@ const getProducts = async (req, res) => {
 const getProductByID = async (req, res) => {
   try {
     const { id } = req.params;
-    const product = await ProductModel.findById(id);
+    let product = await ProductModel.findOne({_id: id, status: 'active'});
 
+    const activeCategories = await CategoryModel.find({ status: 'active' }, '_id');
+    const activeCategoryIds = activeCategories.map(cat => cat._id.toString());
+    product = activeCategoryIds.includes(product?.category_id) ?  product : [];
+  
     return res.status(200).json({
       status: "success",
       data: product,
@@ -51,10 +61,11 @@ const getProductsByCategoryName = async (req, res) => {
     let productsByCategoryName = [];
     let results = [];
     let total = 0;
-    const products = await ProductModel.find({});
+    const products = await ProductModel.find({status: 'active'});
 
     const categories = await CategoryModel.find({
       parent_id: id,
+      status: 'active'
     });
     // kiểm tra xem id truyền vào có là cha của category khác không
     // nếu phải thì phải render ra products của các category con

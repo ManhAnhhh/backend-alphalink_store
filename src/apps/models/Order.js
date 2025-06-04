@@ -63,6 +63,9 @@ const OrderSchema = new mongoose.Schema(
     reasonCanceled: {
       type: String,
     },
+    userCanceled: {
+      type: String,
+    },
   },
   { timestamps: true }
 );

@@ -1,4 +1,5 @@
 const OrderModel = require("../../models/Order");
+const CustomerModel = require("../../models/Customer");
 const ProductModel = require("../../models/Product");
 const transporter = require("../../../helper/transporter");
 const path = require("path");
@@ -168,26 +169,22 @@ exports.getOrdersByCustomerID = async (req, res) => {
 exports.cancelOrder = async (req, res) => {
   try {
     const { customerId } = req.params;
-    const { orderId, cancelAction } = req.body;
+    const { orderId, reasonCanceled } = req.body;
 
-    // console.log(cancelAction); nếu không truyên cacelAcion vào body thì nó là undefined
-    // mặc định lý do hủy là do người mua, nếu ng bán muốn hủy thì truyền thêm vào body cancelAction = 1
+    const customer = await CustomerModel.findById(customerId);
 
-    let reason = "Canceled by you";
-    if (cancelAction == 1) {
-      reason = "Canceled by seller";
-    }
-
+    let userCanceled = customer.fullName;
+    
     if (!customerId) {
       return res.status(400).json({
         status: "error",
-        message: "Customer ID is required",
+        message: "Mã khách hàng là bắt buộc",
       });
     }
     if (!orderId) {
       return res.status(400).json({
         status: "error",
-        message: "Order ID is required",
+        message: "Mã đơn hàng là bắt buộc",
       });
     }
 
@@ -197,18 +194,18 @@ exports.cancelOrder = async (req, res) => {
         _id: orderId,
       },
       {
-        $set: { status: "canceled", reasonCanceled: reason },
+        $set: { status: "canceled", reasonCanceled, userCanceled },
       }
     );
 
     return res.status(200).json({
       status: "success",
-      message: "Order canceled successfully",
+      message: "Đơn hàng đã hủy thành công",
     });
   } catch (err) {
     return res.status(500).json({
       status: "error",
-      message: "Server Error",
+      message: "Lỗi server",
       data: err.message || err,
     });
   }

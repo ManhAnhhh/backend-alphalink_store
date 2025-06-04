@@ -46,6 +46,14 @@ const ProductSchema = new mongoose.Schema({
     type: Number,
     default: 0,
     required: true,
+  },
+  stock: {
+    type: Number,
+    default: 0,
+  },
+  status: {
+    type: String,
+    default: 'active',
   }
 }, {timestamps: true});
 const ProductModel = mongoose.model("Product", ProductSchema, "products");

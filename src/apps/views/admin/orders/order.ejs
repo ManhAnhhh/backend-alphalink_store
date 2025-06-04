@@ -1,0 +1,120 @@
+<%- include('../layout/head') %>
+
+<style>
+  .state-item {
+    pointer-events: none; 
+    cursor: default !important;
+    width: 90%; max-width: 200px;
+  }
+</style>
+
+<body id="page-top">
+  <!-- Page Wrapper -->
+  <div id="wrapper">
+    <!-- Sidebar -->
+    <%- include('../layout/sidebar') %>
+    <!-- End of Sidebar -->
+
+    <!-- Content Wrapper -->
+    <div id="content-wrapper" class="d-flex flex-column">
+      <!-- Main Content -->
+      <div id="content">
+        <!-- Topbar -->
+        <%- include('../layout/search') %>
+        <!-- End of Topbar -->
+
+        <!-- Begin Page Content -->
+        <div class="container-fluid">
+          <!-- Page Heading -->
+          <h3 class="h3 mb-2 text-gray-800">
+            Danh sách đơn hàng <span class="totalActive">(<%= orders.length %>)</span>
+          </h3>
+          <div class="card shadow mb-4">
+            <div class="card-header py-3 d-flex align-items-center justify-content-between">
+              <div>
+                <a href="/admin/products/">Tất cả đơn hàng <span class="totalActive">(<%= orders.length %>)</span></a>
+                <span class="ml-1 mr-1 d-inline-block" style="width: 2px; height: 12px; background-color: #bdbdbd;"></span>
+              </div>
+            </div>
+            <div class="card-body">
+              <div class="table-responsive">
+                <table
+                  class="table table-bordered"
+                  id="dataTable_order"
+                  width="100%"
+                  cellspacing="0"
+                >
+                  <thead>
+                    <tr>
+                      <th class="text-center">Mã đơn hàng</th>
+                      <th>Tên khách hàng</th>
+                      <th>Ngày đặt</th>
+                      <th>Tình trạng</th>
+                      <th class="text-left">Địa chỉ</th>
+                      <th class="text-left">Ghi chú</th>
+                      <th class="">Tổng tiền</th>
+                    </tr>
+                  </thead>
+
+                  <tbody>
+                    <% for(const order of orders) {%>
+                      <tr>
+                        <td class="text-center" style="color: #4e73df">
+                          <a href="/admin/orders/edit/<%=order._id%>">
+                            <%= '#' + order._id.toString().slice(-6) %>
+                          </a>
+                        </td>
+                        <td>
+                          <%=order.fullName%>
+                        </td>
+                        <td>
+                          <%=formatDateToYYYYMMDD(order.createdAt)%>
+                        </td>
+                        <td>
+                          <% if (order.status === 'pending') { %>
+                            <div class="state-item btn btn-warning">Chờ xác nhận</div>
+                          <% } else if (order.status === 'processing') { %>
+                            <div class="state-item btn btn-info">Đã xác nhận</div>
+                          <% } else if (order.status === 'shipping') { %>
+                            <div class="state-item btn btn-primary">Đang vận chuyển</div>
+                          <% } else if (order.status === 'success') { %>
+                            <div class="state-item btn btn-success">Đã hoàn thành</div>
+                          <% } else if (order.status === 'canceled') { %>
+                            <div class="state-item btn btn-secondary">Đã hủy</div>
+                          <% } %>
+                          
+                        </td>
+                        <td class="text-left">
+                          <%= order.address %>
+                        </td>
+
+                        <td class="text-left">
+                          <%= order.note %>
+                        </td>
+
+                        <td style="text-wrap: auto;" class="text-danger">
+                          <%= order.deleveryPrice + order.totalPriceInCart %>
+                        </td>
+                      </tr>
+                    <%}%>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- /.container-fluid -->
+      </div>
+      <!-- End of Main Content -->
+
+      <!-- Footer -->
+      <%- include('../layout/footer') %>
+      <!-- End of Footer -->
+    </div>
+    <!-- End of Content Wrapper -->
+  </div>
+  <!-- End of Page Wrapper -->
+
+  <%- include('../layout/script') %>
+</body>
+

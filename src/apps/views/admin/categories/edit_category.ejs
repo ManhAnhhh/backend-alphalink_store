@@ -1,0 +1,202 @@
+<%- include('../layout/head') %>
+
+<body id="page-top">
+  <!-- Page Wrapper -->
+  <div id="wrapper">
+    <!-- Sidebar -->
+    <%- include('../layout/sidebar') %>
+    <!-- End of Sidebar -->
+
+    <!-- Content Wrapper -->
+    <div id="content-wrapper" class="d-flex flex-column">
+      <!-- Main Content -->
+      <div id="content">
+        <!-- Topbar -->
+        <%- include('../layout/search') %>
+        <!-- End of Topbar -->
+
+        <!-- Begin Page Content -->
+        <div class="container-fluid">
+          <!-- Page Heading -->
+          <h3 class="h3 mb-2 text-gray-800">
+            Sửa danh mục
+          </h3>
+          <form
+            class="card shadow mb-4"
+            action="/admin/categories/edit/<%= category._id %>"
+            role="form"
+            method="post"
+          >
+            <div class="card-header py-3 d-flex align-items-center justify-content-between">
+              <a href="/admin/categories" class="btn btn-light border-0 rounded px-3 py-2">
+                <i class="fa-solid fa-chevron-left"></i>
+              </a>
+              <div>
+                <button
+                  type="submit"
+                  class="btn-primary border-0 rounded px-3 py-2"
+                >
+                  Cập nhật
+                </button>
+              </div>
+            </div>
+            <div class="card-body">
+                <fieldset class="row">
+                  <legend class="col-12">
+                    Thông tin chính
+                  </legend>
+                  <div class="col-4">
+                    <div class="form-group">
+                      <label for="name">Danh mục</label>
+                      <input
+                        type="text"
+                        class="form-control"
+                        id="name"
+                        placeholder="Nhập tên sản phẩm"
+                        name="name"
+                        value="<%= category.name %>"
+                      />
+                    </div>
+                  </div>
+
+                  <div class="col-4">
+                    <div class="form-group">
+                      <label for="status">Trạng thái</label>
+                      <select id="status" name="status" class="custom-select">
+                        <option value="active" <%= category.status === 'active' ? 'selected' : '' %>>Hoạt động</option>
+                        <option value="inactive" <%= category.status === 'inactive' ? 'selected' : '' %>>Không hoạt động</option>
+                      </select>
+                    </div>
+                  </div>
+                </fieldset>
+
+                <hr>
+
+                <!-- Thêm mới danh mục -->
+                <fieldset class="row">
+                  <legend class="d-flex col-12">
+                    Thêm mới danh mục
+                    <button
+                      type="button"
+                      id="add_variant"
+                      class="ml-2 btn btn-primary rounded-circle"
+                    >
+                      <i class="fa-solid fa-plus fa-sm"></i>
+                    </button>
+                  </legend>
+                  <div class="w-100" id="variant-item">
+                    <% if (typeof oldCat !== 'undefined' && oldCat.length > 0) { %>
+                      <% for (let i = 0; i < oldCat.length; i++) { %>
+                        <div class="col-12">
+                          <div class="row align-items-center variant-row">
+                            <div class="col-4">
+                              <div class="form-group">
+                                <label for="cat_<%= i %>">Tên danh mục</label>
+                                <input type="text" class="form-control" name="cat[]" value="<%= oldCat[i] %>" />
+                              </div>
+                            </div>
+                            <div class="col-4">
+                              <div class="form-group">
+                                <label for="new_status_<%= i %>">Trạng thái</label>
+                                <select name="new_status[]" class="custom-select">
+                                  <option value="active" <%= oldStatus[i] === 'active' ? 'selected' : '' %>>Hoạt động</option>
+                                  <option value="inactive" <%= oldStatus[i] === 'inactive' ? 'selected' : '' %>>Không hoạt động</option>
+                                </select>
+                              </div>
+                            </div>
+                            <div class="col-4 d-flex justify-content-end">
+                              <button type="button" 
+                                class="btn btn-danger rounded-circle remove_variant" 
+                                style="padding: 10px 6px">
+                                <i class="fa-solid fa-xmark fa-xs"></i>
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      <% } %>
+                    <% } %>
+                  </div>
+                  
+                </fieldset>
+            </div>
+          </form>
+        </div>
+        <!-- /.container-fluid -->
+      </div>
+      <!-- End of Main Content -->
+
+      <!-- Footer -->
+      <%- include('../layout/footer') %>
+      <!-- End of Footer -->
+    </div>
+    <!-- End of Content Wrapper -->
+  </div>
+  <!-- End of Page Wrapper -->
+
+  <%- include('../layout/script') %>
+</body>
+
+<% if (error) { %>
+  <script>
+    Swal.fire({
+      icon: 'error',
+      title: 'Lỗi',
+      html: `<%= error.replace(/'/g, "\\'") %>`, // escape để tránh lỗi JS
+    });
+  </script>
+<% } %>
+
+<script>
+  const variantContainer = document.getElementById("variant-item");
+  const addBtn = document.getElementById("add_variant");
+
+  addBtn.addEventListener("click", () => {
+    const variantIndex = document.querySelectorAll(".variant-row").length;
+    const variantHTML = `
+      <div class="row align-items-center variant-row">
+        <div class="col-4">
+          <div class="form-group">
+            <div
+              class="d-flex justify-content-between align-items-center"
+            >
+              <label class="font-weight-bold" for="cat_${variantIndex}">
+                Tên danh mục
+              </label>
+            </div>
+            <input
+              type="text"
+              class="form-control"
+              id="cat_${variantIndex}"
+              name="cat[]"
+              placeholder="Nhập danh mục"
+            />
+          </div>
+        </div>
+        <div class="col-4">
+          <div class="form-group">
+            <label for="new_status_${variantIndex}">Trạng thái</label>
+            <select id="new_status_${variantIndex}" name="new_status[]" class="custom-select">
+              <option value="active" >Hoạt động</option>
+              <option value="inactive" >Không hoạt động</option>
+            </select>
+          </div>
+        </div>
+        <div class="col-4 d-flex justify-content-end">
+          <button type="button" class="btn btn-danger rounded-circle remove_variant" style="padding: 10px 6px">
+                <i class="fa-solid fa-xmark fa-xs"></i>
+          </button>
+        </div>`;
+
+    const div = document.createElement("div");
+    div.classList.add("col-12");
+    div.innerHTML = variantHTML;
+    variantContainer.appendChild(div);
+  });
+
+  // Xoá biến thể
+  variantContainer.addEventListener("click", function (e) {
+    if (e.target.closest(".remove_variant")) {
+      e.target.closest(".variant-row").remove();
+    }
+  });
+</script>

@@ -28,9 +28,32 @@ const storage = (path) => {
   });
 };
 
+// Cấu hình storage cho backend - sửa ảnh sản phẩm
+const storageProduct = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, pathProducts); // đường dẫn thư mục lưu file
+  },
+  filename: function (req, file, cb) {
+    // đặt tên file → bạn có thể customize
+    const uniqueSuffix =
+      'temp-' +
+      new Date().getFullYear().toString() +
+      (new Date().getMonth() + 1).toString() +
+      new Date().getDate().toString() +
+      "-" +
+      new Date().getHours().toString() +
+      new Date().getMinutes().toString() +
+      new Date().getSeconds().toString() + 
+      "-" +
+      Math.round(Math.random() * 1e9);
+    const ext = path.extname(file.originalname);
+    cb(null, uniqueSuffix + ext); // ví dụ: 1714657082039-834321232.jpg
+  },
+});
+
 const uploadCustomers = multer({ storage: storage(pathCustomers) });
 const uploadProductReviews = multer({ storage: storage(pathProductReviews) });
-const uploadProducts = multer({ storage: storage(pathProducts) });
+const uploadProducts = multer({ storage: storageProduct});
 const uploadUsers = multer({ storage: storage(pathUsers) });
 
 module.exports = {

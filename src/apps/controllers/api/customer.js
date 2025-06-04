@@ -3,13 +3,13 @@ const fs = require("fs");
 const config = require("config");
 const path = require("path");
 exports.getCustomers = async (req, res) => {
-  const total = await CustomerModel.find().countDocuments();
+  const total = await CustomerModel.find({ role: 'customer' }).countDocuments();
 
   const page = req.query.page || 1;
   const limit = req.query.limit || total;
   const skip = page * limit - limit;
 
-  const customers = await CustomerModel.find().skip(skip).limit(limit);
+  const customers = await CustomerModel.find({ role: 'customer' }).skip(skip).limit(limit);
   return res.status(200).json({
     status: "success",
     totalCustomers: total,
@@ -50,7 +50,7 @@ exports.updateCustomer = async (req, res) => {
     const { fullName, email, phone, address, sex, birthDay } = req.body;
     const thumbnail = req.file;
     const currentCustomer = await CustomerModel.findById(id);
-    const customers = await CustomerModel.find();
+    const customers = await CustomerModel.find({ role: 'customer' });
     let picture = currentCustomer.picture;
     const isEmailExist = customers.some(
       (customer) => customer.email === email && customer._id != id
@@ -107,14 +107,14 @@ exports.registerCustomer = async (req, res) => {
   try {
     const { fullName, email, phone, password } = req.body;
 
-    const customer = await CustomerModel.findOne({ email });
+    const customer = await CustomerModel.findOne({ email, role: 'customer' });
     if (customer)
       return res.status(400).json({
         status: "error",
         message: "Email already exists",
       });
 
-    const isPhoneExist = await CustomerModel.findOne({ phone });
+    const isPhoneExist = await CustomerModel.findOne({ phone, role: 'customer'});
     if (isPhoneExist)
       return res.status(400).json({
         status: "error",
@@ -144,7 +144,7 @@ exports.registerCustomer = async (req, res) => {
 exports.loginCustomer = async (req, res) => {
   try {
     const { email, password } = req.body;
-    const customer = await CustomerModel.findOne({ email });
+    const customer = await CustomerModel.findOne({ email, role: 'customer' });
     if (!customer) {
       return res.status(401).json({
         status: "error",

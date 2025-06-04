@@ -4,6 +4,7 @@ const ProductModel = require("../../models/Product");
 const getCategories = async (req, res) => {
   const query = {};
   if (req.query.name) query.name = req.query.name;
+  query.status = 'active';
 
   const total = await CategoryModel.find(query).countDocuments();
 
@@ -28,7 +29,7 @@ const getCategories = async (req, res) => {
 const getCategory = async (req, res) => {
   try {
     const { id } = req.params;
-    const category = await CategoryModel.findById(id);
+    const category = await CategoryModel.findOne({_id: id, status: 'active'});
     res.status(200).json({
       status: "success",
       data: category,
@@ -45,12 +46,12 @@ const getCategory = async (req, res) => {
 const getProductsByCategory = async (req, res) => {
   try {
     const id = req.params.id;
-    const total = await ProductModel.find({ category_id: id }).countDocuments();
+    const total = await ProductModel.find({ category_id: id, status: 'active' }).countDocuments();
     const page = req.query.page || 1;
     const limit = req.query.limit || total;
     const skip = page * limit - limit;
 
-    const products = await ProductModel.find({ category_id: id })
+    const products = await ProductModel.find({ category_id: id, status: 'active' })
       .sort({ _id: -1 })
       .skip(skip)
       .limit(limit);

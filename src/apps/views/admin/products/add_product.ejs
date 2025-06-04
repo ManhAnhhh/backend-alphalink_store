@@ -1,0 +1,344 @@
+<%- include('../layout/head') %>
+
+<style>
+  .upload-placeholder {
+    position: absolute;
+    top: 40%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: #888;
+    /* pointer-events: none; */
+    text-align: center;
+    font-size: 14px;
+  }
+</style>
+
+<body id="page-top">
+  <!-- Page Wrapper -->
+  <div id="wrapper">
+    <!-- Sidebar -->
+    <%- include('../layout/sidebar') %>
+    <!-- End of Sidebar -->
+
+    <!-- Content Wrapper -->
+    <div id="content-wrapper" class="d-flex flex-column">
+      <!-- Main Content -->
+      <div id="content">
+        <!-- Topbar -->
+        <%- include('../layout/search') %>
+        <!-- End of Topbar -->
+
+        <!-- Begin Page Content -->
+        <div class="container-fluid">
+          <!-- Page Heading -->
+          <h3 class="h3 mb-2 text-gray-800">
+            Thêm mới sản phẩm
+          </h3>
+          <form
+            class="card shadow mb-4"
+            action="/admin/products/store"
+            role="form"
+            method="post"
+            enctype="multipart/form-data"
+          >
+            <div class="card-header py-3 d-flex align-items-center justify-content-between">
+              <a href="/admin/products" class="btn btn-light border-0 rounded px-3 py-2">
+                <i class="fa-solid fa-chevron-left"></i>
+              </a>
+              <div>
+                <button
+                type="submit"
+                class="btn-primary border-0 rounded px-3 py-2"
+              >
+                Thêm mới
+              </button>
+
+              <button
+                type="reset"
+                class="btn-secondary border-0 rounded px-3 py-2"
+              >
+                Làm mới
+              </button>
+              </div>
+            </div>
+            <div class="card-body">
+              <!-- Thông tin chính  -->
+              <fieldset>
+                <legend>Thông tin chính</legend>
+                <div class="row">
+                  <div class="col-12">
+                    <div class="form-group">
+                      <label for="name">Tên sản phẩm</label>
+                      <input
+                        type="text"
+                        class="form-control"
+                        id="name"
+                        placeholder="Nhập tên sản phẩm"
+                        name="name"
+                        required
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div class="row">
+                  <div class="col-4">
+                    <div class="form-group">
+                      <label for="stock">Số lượng</label>
+                      <input
+                        type="number"
+                        class="form-control"
+                        id="stock"
+                        placeholder="Nhập số lượng"
+                        name="stock"
+                        required
+                      />
+                    </div>
+                  </div>
+
+                  <div class="col-4">
+                    <div class="form-group">
+                      <label for="price">Giá bán (USD)</label>
+                      <input
+                        type="number"
+                        class="form-control"
+                        id="price"
+                        placeholder="Nhập giá bán"
+                        name="price"
+                        required
+                      />
+                    </div>
+                  </div>
+
+                  <div class="col-4">
+                    <div class="form-group">
+                      <label for="category">Danh mục</label>
+                      <select class="form-control col-12" name="category_id">
+                        <% categories.forEach(function(parent) { %>
+                          <% if(!parent.parent_id) { %>
+                            <!-- Là danh mục cha -->
+                            <% const children = categories.filter(c => c.parent_id === parent._id.toString()); %>
+                              <% if (children.length > 0) { %>
+                                <!-- Có danh mục con -->
+                                  <optgroup label="<%= capitalizeFirstLetter(parent.name) %>">
+                                    <% children.forEach(function(child) { %>
+                                      <option value="<%= child._id %>" >
+                                        <%= capitalizeFirstLetter(child.name) %>
+                                      </option>
+                                    <% }) %>
+                                  </optgroup>
+                              <% } else { %>
+                                <option value="<%= parent._id %>" >
+                                  <%= capitalizeFirstLetter(parent.name)%>
+                                </option>      
+                              <% } %>
+                          <% } %>
+                        <% }) %>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="row">
+                  <div class="col-12">
+                    <div class="form-check form-check-inline">
+                      <input
+                        class="form-check-input"
+                        type="checkbox"
+                        name="is_stock"
+                        id="is_stock"
+                        checked
+                      />
+                      <label class="form-check-label" for="is_stock">
+                        Còn hàng
+                      </label>
+                    </div>
+
+                    <div class="form-check form-check-inline">
+                      <input
+                        class="form-check-input"
+                        type="checkbox"
+                        name="is_feature"
+                        id="is_feature"
+                        checked
+                      />
+                      <label class="form-check-label" for="is_feature">
+                        Sản phẩm nổi bật
+                      </label>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="row">
+                  <div class="col-12">
+                    <div class="form-group">
+                      <label for="accessories">Phụ kiện</label>
+                      <input
+                        type="text"
+                        class="form-control"
+                        id="accessories"
+                        placeholder="Nhập tên phụ kiện"
+                        name="accessories"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div class="row">
+                  <div class="col-12">
+                    <div class="form-group">
+                      <label for="product_details">Mô tả</label>
+                      <textarea
+                        class="form-control"
+                        id="product_details"
+                        placeholder="Nhập mô tả sản phẩm"
+                        name="product_details"
+                        rows="3"
+                      ></textarea>
+                    </div>
+                  </div>
+                </div>
+              </fieldset>
+
+              <hr />
+
+              <!-- Biến thể  -->
+              <fieldset>
+                <legend class="d-flex">
+                  Thông tin chi tiết
+                  <button
+                    type="button"
+                    id="add_variant"
+                    class="ml-2 btn btn-primary rounded-circle"
+                  >
+                    <i class="fa-solid fa-plus fa-sm"></i>
+                  </button>
+                </legend>
+
+                <div class="row align-items-center" id="variant-item">
+                  <div class="col-12">
+                    <div class="row align-items-center variant-row">
+                      <div class="col-12">
+                        <div class="form-group">
+                          <div
+                            class="d-flex justify-content-between align-items-center"
+                          >
+                            <label class="font-weight-bold" for="color_0">
+                              Màu sắc
+                            </label>
+                          </div>
+                          <input
+                            type="text"
+                            class="form-control"
+                            id="color_0"
+                            name="color[]"
+                            placeholder="Nhập màu sắc"
+                            required
+                          />
+                        </div>
+                      </div>
+                      <div class="col-12">
+                        <label
+                          for="img_0"
+                          style="cursor: pointer;"
+                          class="d-block position-relative"
+                        >
+                          <img
+                            class="d-none"
+                            id="preview_0"
+                            src=""
+                            width="100"
+                            height="100"
+                          />
+                          <div class="upload-placeholder">
+                            <i class="fa-solid fa-upload"></i> Chọn ảnh
+                          </div>
+                        </label>
+                        <input
+                          type="file"
+                          class="form-control d-none"
+                          id="img_0"
+                          name="img[]"
+                          onchange="previewImage(event, 0)"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </fieldset>
+            </div>
+          </form>
+        </div>
+        <!-- /.container-fluid -->
+      </div>
+      <!-- End of Main Content -->
+
+      <!-- Footer -->
+      <%- include('../layout/footer') %>
+      <!-- End of Footer -->
+    </div>
+    <!-- End of Content Wrapper -->
+  </div>
+  <!-- End of Page Wrapper -->
+
+  <%- include('../layout/script') %>
+</body>
+
+<script>
+  const variantContainer = document.getElementById("variant-item");
+  const addBtn = document.getElementById("add_variant");
+
+  addBtn.addEventListener("click", () => {
+    const variantIndex = document.querySelectorAll(".variant-row").length;
+    const variantHTML = `
+      <div class="row align-items-center variant-row">
+        <hr>
+        <div class="col-12">
+          <div class="form-group">
+            <div class="d-flex justify-content-between align-items-center">
+              <label class="font-weight-bold" for="color_${variantIndex}">Màu sắc</label>
+              <button type="button" class="btn btn-danger rounded-circle remove_variant" style="padding: 10px 6px">
+                <i class="fa-solid fa-xmark fa-xs"></i>
+              </button>
+            </div>
+            <input type="text" class="form-control" id="color_${variantIndex}" name="color[]" placeholder="Nhập màu sắc" required />
+          </div>
+        </div>
+        <div class="col-12">
+          <label for="img_${variantIndex}" style="cursor: pointer;" class="d-block position-relative">
+            <img class="d-none" id="preview_${variantIndex}" src="" width="100" height="100" />
+            <div class="upload-placeholder mt-2"><i class="fa-solid fa-upload"></i> Chọn ảnh</div>
+          </label>
+          <input type="file" class="form-control d-none" id="img_${variantIndex}" name="img[]" onchange="previewImage(event, ${variantIndex})" />
+        </div>
+      </div>
+    `;
+
+    const div = document.createElement("div");
+    div.classList.add("col-12");
+    div.innerHTML = variantHTML;
+    variantContainer.appendChild(div);
+  });
+
+  // Xoá biến thể
+  variantContainer.addEventListener("click", function (e) {
+    if (e.target.closest(".remove_variant")) {
+      e.target.closest(".variant-row").remove();
+    }
+  });
+
+  // Hiển thị preview ảnh
+  function previewImage(event, index) {
+    const input = event.target;
+    const preview = document.getElementById(`preview_${index}`);
+    if (input.files && input.files[0]) {
+      const reader = new FileReader();
+      reader.onload = function (e) {
+        preview.classList.add("d-block");
+        preview.classList.remove("d-none");
+        preview.src = e.target.result;
+      };
+      reader.readAsDataURL(input.files[0]);
+    }
+  }
+</script>

@@ -3,4 +3,6 @@ module.exports = {
   prefixApiVersion: process.env.PREFIX_API_VERSION,
   default_limit_page: 10,
   static_folder: `${__dirname}/../src/public`,
+  session_key: "linhanhh",
+  session_secure: false,
 };

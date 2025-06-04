@@ -1,0 +1,338 @@
+<%- include('../layout/head') %>
+
+<style>
+  select option:disabled {
+    color: #9e9e9e !important;
+    background-color: #eaeaea;
+  }
+
+  .info-item {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 16px;
+    min-height: 54px;
+  }
+  .info-icon {
+    font-size: 1.6rem;
+    flex-shrink: 0;
+    user-select: none;
+    width: 40px;  
+    text-align: center;
+
+  }
+  .info-label {
+    font-weight: 700;
+    font-size: 1.05rem;
+    margin-bottom: 4px;
+    user-select: none;
+  }
+  .info-value {
+    font-weight: 600;
+    font-size: 1rem;
+    word-break: break-word;
+  }
+</style>
+
+<body id="page-top">
+  <!-- Page Wrapper -->
+  <div id="wrapper">
+    <!-- Sidebar -->
+    <%- include('../layout/sidebar') %>
+    <!-- End of Sidebar -->
+
+    <!-- Content Wrapper -->
+    <div id="content-wrapper" class="d-flex flex-column">
+      <!-- Main Content -->
+      <div id="content">
+        <!-- Topbar -->
+        <%- include('../layout/search') %>
+        <!-- End of Topbar -->
+
+        <!-- Begin Page Content -->
+        <div class="container-fluid">
+          <!-- Page Heading -->
+          <h3 class="h3 mb-2 text-gray-800">
+            <a href="/admin/orders" class="btn btn-light border-0 rounded px-3 py-2">
+              <i class="fa-solid fa-chevron-left" aria-hidden="true"></i>
+            </a>
+            Chi tiết đơn hàng 
+            <span class="font-weight-bold">
+              <%= '#' + order._id.toString().slice(-6) %>
+            </span>
+          </h3>
+          <form
+                class="card shadow mb-4"
+                action="/admin/orders/update/<%= order._id %>"
+                role="form"
+                method="post"
+              >
+            <!-- Thông tin chung -->
+            <div>
+              <div class="card-header py-3 d-flex align-content-center justify-content-between">
+                  <h4>
+                    Thông tin chung   
+                  </h4>  
+                  <button
+                    type="submit"
+                    class="btn-primary border-0 rounded px-3 py-2"
+                    >
+                    Cập nhật
+                  </button>
+              </div>
+              
+
+              <div class="card-body">
+                <div class="row">
+                  <div class="col-lg-3 col-md-12">
+                    <div class="">
+                      <div class="info-item">
+                        <div class="info-icon"><i class="fa-regular fa-user fa-lg"></i></div>
+                        <div>
+                          <div class="info-label">Tên khách hàng</div>
+                          <div class="info-value"><%= order.fullName %></div>
+                        </div>
+                      </div>
+
+                      <div class="info-item">
+                        <div class="info-icon"><i class="fa-solid fa-ticket fa-lg"></i></div>
+                        <div>
+                          <div class="info-label">Mã giảm giá</div>
+                          <div class="info-value"><%= order.voucher %></div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-lg-4 col-md-12">
+                    <div class="">
+                      <div class="info-item">
+                        <div class="info-icon"><i class="fa-regular fa-envelope fa-lg"></i></div>
+                        <div>
+                          <div class="info-label">Email</div>
+                          <div class="info-value"><%= order.email %></div>
+                        </div>
+                      </div>
+
+                      <div class="info-item">
+                        <div class="info-icon"><i class="fa-solid fa-phone fa-lg"></i></div>
+                        <div>
+                          <div class="info-label">Số điện thoại</div>
+                          <div class="info-value"><%= order.phone %></div>
+                        </div>
+                      </div>
+
+                    </div>
+                  </div>
+                  <div class="col-lg-5 col-md-12">
+                    <div class="d-flex justify-content-center">
+                      <div class="info-item">
+                        <div class="info-icon"><i class="fa-solid fa-house-user fa-lg"></i></div>
+                        <div>
+                          <div class="info-label">Địa chỉ giao hàng</div>
+                          <div class="info-value"><%= order.address %></div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-12">
+                    <div class="d-flex align-content-center mt-2 mb-2">
+                        <label style="width: 100px; align-self: center;"
+                          class="info-label mr-3 mb-0" for="status">
+                            Trạng thái
+                        </label>
+
+                        <select style="width: 300px;" id="status" name="status" class="custom-select">
+                          <% 
+                            let currentIndex = status_orders.findIndex(ele => ele.key === order.status); 
+                          %>
+                          <% status_orders.forEach((ele, index) => { %>
+                            <option value="<%= ele.key  %>"
+                              <%= ele.key === order.status ? 'selected' : '' %>
+                              <%= index < currentIndex ? 'disabled' : '' %>
+                            >
+                              <%= ele.value %>
+                            </option>
+                          <% }); %>
+                        </select>
+                        <!-- order.status -->
+                    </div> 
+                  </div>
+
+                
+                  <div class="col-12">
+                    <div id="cancel-fields" class="row" style="display: none;">
+                    <div class="col-12">
+                      <div class="info-item">
+                        <div class="info-icon"><i class="fa-solid fa-user-xmark fa-lg"></i></div>
+                        <div>
+                          <div class="info-label">Người hủy đơn</div>
+                          <input
+                            type="text"
+                            class="form-control"
+                            id="userCanceled"
+                            placeholder="Người hủy đơn"
+                            name="userCanceled"
+                            readonly
+                            value="<%= order.userCanceled || fullNameLogin %>"
+                          />
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="col-12">
+                      <div class="info-item">
+                        <div class="info-icon"><i class="fa-solid fa-times-circle fa-lg"></i></div>
+                        <div class="w-100">
+                          <div class="info-label">Lý do hủy đơn </div>
+                          <input
+                            <%= order.reasonCanceled ? 'disabled' : '' %>
+                            type="text"
+                            class="form-control"
+                            id="reasonCanceled"
+                            placeholder="Lý do hủy đơn"
+                            name="reasonCanceled"
+                            value="<%= order.reasonCanceled %>"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  </div>
+                  <div class="col-12">
+                    <div class="info-item">
+                        <div class="info-icon"><i class="fa-solid fa-book fa-lg"></i></div>
+                        <div>
+                          <div class="info-label">Ghi chú</div>
+                          <div class="info-value"><%= order.note %></div>
+                        </div>
+                    </div>
+                  </div>
+                </div>
+              </div>   
+            </div> 
+
+            <!-- Thông tin sản phẩm -->
+            <div>
+              <h4 class="card-header py-3">
+                Thông tin đơn hàng
+              </h4>  
+              <div class="card-body table-responsive ">
+                <table
+                  class="table table-bordered"
+                  width="100%"
+                  cellspacing="0"
+                >
+                  <thead>
+                    <tr>
+                      <th>Sản phẩm</th>
+                      <th style="text-wrap: no-wrap;">Thành tiền</th>
+                    </tr>
+                  </thead>
+
+                  <tbody>
+                    <% for(const product of products) {%>
+                      <tr>
+                        <td>
+                          <div class="d-flex gap-2 align-items-center">
+                            <div>
+                              <img
+                                width="60"
+                                height="60"
+                                src="../uploads/products/<%=product.img[product.colorIndex]%> "
+                              />
+                            </div>
+                            <div class="ml-3">
+                              <div class="font-weight-bold">
+                                <%=product.name%> 
+                              </div>
+                              <div class="d-flex mt-2">
+                                <div class="mr-3">Số lượng: <span class="text-danger font-weight-bold">x<%=product.qty%></span></div>
+                                <div>Màu sắc: <span class="font-weight-bold"><%=product.color[product.colorIndex]%></span></div>
+                              </div>
+                            </div>
+                          </div>
+                        </td>
+                        <td class="text-danger font-weight-bold text-end">
+                          <%=product.qty * product.price%>
+                        </td>
+                      </tr>
+                    <%}%>
+                    
+                  </tbody>
+                </table>
+                <div class="item-end">
+                  <hr>
+                  <div class="d-flex justify-content-end">
+                    <div class="text-end fs-12">
+                      Mã giảm giá:
+                      <span class="ms-1 text-danger">0 ₫</span>
+                    </div>
+                  </div>
+                  <div class="d-flex justify-content-end">
+                    <div class="text-end fs-12">
+                      Phí vận chuyển:
+                      <span class="ms-1 text-danger">
+                        <%= order.deleveryPrice  %>
+                      </span>
+                    </div>
+                  </div>
+                  <div class="d-flex justify-content-end">
+                    <div class="text-end fs-12">
+                      Tổng tiền hàng:
+                      <span
+                        class="ms-1 text-danger"
+                      >
+                        <%= order.totalPriceInCart  %>
+                      </span>
+                    </div>
+                  </div>
+                  <div
+                    class="d-flex justify-content-end">
+                    <div class="text-end fs-12">
+                      Tổng thanh toán:
+                      <span
+                        class="ms-1 text-danger"
+                      >
+                        <%= order.totalPriceInCart + order.deleveryPrice %>
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+        <!-- /.container-fluid -->
+      </div>
+      <!-- End of Main Content -->
+
+      <!-- Footer -->
+      <%- include('../layout/footer') %>
+      <!-- End of Footer -->
+    </div>
+    <!-- End of Content Wrapper -->
+  </div>
+  <!-- End of Page Wrapper -->
+
+  <%- include('../layout/script') %>
+</body>
+
+
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const statusSelect = document.getElementById('status');
+    const cancelFields = document.getElementById('cancel-fields');
+
+    function toggleCancelFields() {
+      if (statusSelect.value === 'canceled') {
+        cancelFields.style.display = 'flex';
+      } else {
+        cancelFields.style.display = 'none';
+      }
+    }
+
+    statusSelect.addEventListener('change', toggleCancelFields);
+    toggleCancelFields(); // Gọi khi load lần đầu
+  });
+</script>
