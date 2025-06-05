@@ -20,6 +20,19 @@ const index = async (req, res) => {
     { $sort: { _id: -1 } },
   ]);
 
+  const allCategories = await CategoryModel.find({ status: 'active' }).sort({ name: 1 });
+
+  const categories = allCategories.filter(cat => {
+    if (cat.parent_id) {
+      // Danh mục con => lấy
+      return true;
+    } else {
+      // Danh mục cha => chỉ lấy nếu KHÔNG bị làm cha của danh mục khác
+      const isUsedAsParent = allCategories.some(c => c.parent_id?.toString() === cat._id.toString());
+      return !isUsedAsParent;
+    }
+  });
+
   const productsActive = products.filter((item) => item.status == 'active');
   const productsInactive = products.filter((item) => item.status == 'inactive');
 
@@ -27,6 +40,7 @@ const index = async (req, res) => {
     products: productsActive,
     productsInactive: productsInactive,
     formatDateToDDMMYYYYHHMMSS: Helper.formatDateToDDMMYYYYHHMMSS,
+    categories: categories,
   });
 };
 

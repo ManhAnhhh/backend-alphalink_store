@@ -33,12 +33,20 @@
                 <a
                 href="/admin/products/create"
                 class="btn-primary border-0 rounded px-3 py-2 text-decoration-none"
-              >
-                Thêm sản phẩm
-              </a>
+                >
+                  Thêm sản phẩm
+                </a>
               </div>
             </div>
             <div class="card-body">
+              <!-- Select dropdown để lọc -->
+              <div>Danh mục</div>
+              <select id="catFilter" class="form-control mb-2" style="width: 180px;">
+                <option value="">Tất cả</option>
+                <% for (const cat of categories) { %>
+                    <option value="<%= cat.name %>"><%= cat.name %></option>
+                <% } %>
+              </select>
               <div class="table-responsive">
                 <table
                   class="table table-bordered"
@@ -170,6 +178,19 @@
             Swal.fire('Lỗi', 'Không thể kết nối server', 'error');
             console.log(err);
           });
+    });
+  });
+</script>
+
+
+<script>
+  $(document).ready(function () {
+    var table = $('#dataTable').DataTable();
+
+    // Lắng nghe sự kiện thay đổi dropdown
+    $('#catFilter').on('change', function () {
+      var selected = $(this).val();
+      table.column(4).search(selected).draw(); // Cột số 0 là Danh mục
     });
   });
 </script>
