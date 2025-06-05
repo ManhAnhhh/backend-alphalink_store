@@ -16,7 +16,7 @@ const checkLogout = (req, res, next) => {
     delete req.session.email;
     delete req.session.password;
     delete req.session.fullName;
-    delete req.session.id;
+    delete req.session.userId;
   }
   next();
 }

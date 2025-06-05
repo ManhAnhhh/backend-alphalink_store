@@ -1,0 +1,247 @@
+<%- include('../layout/head', { pageTitle: 'Tin nhắn'}) %>
+
+<style>
+  .item-message {
+    cursor: pointer;
+    padding: 0.75rem;
+    border-radius: 8px;
+  }
+
+  .item-message-selected,
+  .item-message-selected:hover {
+    background-color: #dceaf9 !important;
+  }
+  .item-message:hover {
+    background-color: #e6e6e6;
+  }
+  .scroll-to-top {
+    display: none !important;
+  }
+  .card-body {
+    padding: 1rem;
+  }
+  .input-message {
+    outline: none;
+    box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+  }
+  .btn-send {
+    padding: 6px;
+  }
+  .btn-send:hover {
+    background-color: rgba(35, 110, 249, 0.2);
+    transition: all .5s ease;
+  } 
+</style>
+
+<body id="page-top">
+  <!-- Page Wrapper -->
+  <div id="wrapper">
+    <!-- Content Wrapper -->
+    <div id="content-wrapper" class="d-flex flex-column">
+      <!-- Main Content -->
+      <div id="content" class="d-flex flex-column" style="height: 100vh;">
+        <!-- Topbar -->
+        <%- include('../layout/search') %>
+        <!-- End of Topbar -->
+
+        <!-- Begin Page Content -->
+        <div class="container-fluid" style="flex: 1; overflow-y: auto;">
+          <div class="row" style="height: 100%;">
+            <!-- Side-bar -->
+            <div class="col-lg-4 col-md-3 col-2" style="height: 100%;">
+              <!-- Circle Buttons -->
+              <div class="card shadow mb-4" style="height: 100%;">
+                <div class="card-header py-3">
+                  <h6 class="m-0 font-weight-bold text-primary">Tin nhắn</h6>
+                  <div class="mt-2">
+                    <input
+                      type="text"
+                      class="form-control"
+                      placeholder="Tìm kiếm tin nhắn..."
+                    />
+                  </div>
+                </div>
+                <div class="card-body list-messages" style="overflow: auto;">
+                  <% for (const ele of conversations) { %>
+                    <div class="item-message d-flex <%= conversation?.conversation?._id.toString() == ele.conversation._id ? 'item-message-selected' : 'bg-white' %>" data-id="<%= ele.conversation._id %>">
+                      <div>
+                        <img
+                          class="rounded-circle"
+                          style="width: 56px; height: 56px;object-fit: cover;"
+                          src="/assets/uploads/customers/<%= ele.user.picture %>"
+                          alt=""
+                        />
+                      </div>
+                      
+                      <div class="ml-2">
+                        <h6 class="m-0 mt-2 mb-1 font-weight-bold"><%= ele.user.fullName %></h6>
+                        <p style="font-size: 14px;" class="m-0"><%= ele.user.email %></p>
+                      </div>
+                    </div>
+                  <% } %>
+                </div>
+              </div>
+            </div>
+
+            <!-- Message -->
+            <div class="col-lg-8 col-md-9 col-10" style="height: 100%;">
+              <div class="card shadow mb-4" style="height: 100%;">
+                <div class="card-header py-3 d-flex">
+                  <div>
+                    <img
+                      class="rounded-circle"
+                      style="width: 56px; height: 56px;object-fit: cover;"
+                      src="/assets/uploads/customers/<%= conversation?.user?.picture  %>"
+                      alt=""
+                    />
+                  </div>
+                  <div class="ml-2">
+                    <h6 class="m-0 mt-2 font-weight-bold"><%= conversation.user?.fullName %></h6>
+                    <p class="m-0"><%= conversation.user?.email %></p>
+                  </div>
+                </div>
+                <div class="card-body d-flex flex-column" id="messages" style="height: 100%;">
+                  <div
+                    class="d-flex flex-column"
+                    style="overflow-y: auto; flex: 1;"
+                  >
+                    <% for (const message of messages) {%>
+                      <% if (message.senderId == userIdLogin) { %>
+                        <div
+                          style="max-width: 400px; background-color: #5f31fb;"
+                          class="text-white rounded-pill ml-auto pl-3 pr-3 pt-2 pb-2 mt-1 mb-1"
+                        >
+                          <%= message?.message %>
+                        </div>
+                      <% } else { %>
+                        <div
+                          style="max-width: 400px; background-color: #eaeaea;"
+                          class="rounded-pill mr-auto pl-3 pr-3 pt-2 pb-2 mt-1 mb-1"
+                        >
+                          <%= message?.message %>
+                        </div>
+                    <% }} %>
+                    
+                  </div>
+                  <!-- Gửi tin nhắn -->
+                  <div>
+                    <hr class="mb-2" />
+                    <div class="d-flex">
+                      <input
+                        id="input-message"
+                        type="text"
+                        name="message"
+                        class="input-message w-100 border-1 rounded-pill border-0 pl-2 pr-2 pt-1"
+                        placeholder="Nhập tin nhắn..."
+                        data-id="<%= conversation?.conversation?._id %>"
+                      />
+                      <button id="btn-send" class="btn-send ml-1 border-0 rounded-circle" data-id="<%= conversation?.conversation?._id %>">
+                        <svg
+                          class=""
+                          height="20px"
+                          viewBox="0 0 24 24"
+                          width="20px"
+                          fill="#0070f6"
+                          
+                        >
+                          <title>Nhấn Enter để gửi</title>
+                          <path
+                            d="M16.6915026,12.4744748 L3.50612381,13.2599618 C3.19218622,13.2599618 3.03521743,13.4170592 3.03521743,13.5741566 L1.15159189,20.0151496 C0.8376543,20.8006365 0.99,21.89 1.77946707,22.52 C2.41,22.99 3.50612381,23.1 4.13399899,22.8429026 L21.714504,14.0454487 C22.6563168,13.5741566 23.1272231,12.6315722 22.9702544,11.6889879 C22.8132856,11.0605983 22.3423792,10.4322088 21.714504,10.118014 L4.13399899,1.16346272 C3.34915502,0.9 2.40734225,1.00636533 1.77946707,1.4776575 C0.994623095,2.10604706 0.8376543,3.0486314 1.15159189,3.99121575 L3.03521743,10.4322088 C3.03521743,10.5893061 3.34915502,10.7464035 3.50612381,10.7464035 L16.6915026,11.5318905 C16.6915026,11.5318905 17.1624089,11.5318905 17.1624089,12.0031827 C17.1624089,12.4744748 16.6915026,12.4744748 16.6915026,12.4744748 Z"
+                            fill="var(--chat-composer-button-color)"
+                          ></path>
+                        </svg>
+                      </button>
+                    </div>
+                  </div>
+                  
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- /.container-fluid -->
+      </div>
+      <!-- End of Main Content -->
+    </div>
+    <!-- End of Content Wrapper -->
+  </div>
+  <!-- End of Page Wrapper -->
+
+  <%- include('../layout/script') %>
+</body>
+
+<script>
+  const input = document.getElementById('input-message');
+  const btnSend = document.getElementById('btn-send');
+  const chatBox = document.getElementById('messages');
+  const chatBoxInner = document.querySelector('#messages > div'); // nơi chứa tin nhắn
+
+  // // Hàm để cuộn xuống cuối khung chat
+  // function scrollToBottom() {
+  //   if (chatBoxInner) {
+  //     chatBoxInner.scrollTop = chatBoxInner.scrollHeight;
+  //   }
+  // }
+
+  // // Cuộn xuống cuối khi trang tải xong và DOM đã sẵn sàng
+  // window.onload = function() {
+  //   // Thêm một setTimeout nhỏ để đảm bảo mọi thứ đã render
+  //   scrollToBottom();
+  // };
+
+  // Gửi tin nhắn qua fetch
+  async function sendMessage(conversation_id) {
+    const message = input.value.trim();
+    if (!message) return;
+
+    const res = await fetch(`/admin/messages/send-message/${conversation_id}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        conversationId: conversation_id,
+        message
+      })
+    });
+
+    const data = await res.json();
+    if (data.success) {
+      input.value = '';
+      chatBoxInner.innerHTML += `
+        <div
+          style="max-width: 400px; background-color: #5f31fb;"
+          class="text-white rounded-pill ml-auto pl-3 pr-3 pt-2 pb-2 mt-1 mb-1"
+        >
+          ${message}
+        </div>
+      `;
+      chatBoxInner.scrollTop = chatBoxInner.scrollHeight;
+    }
+  }
+
+  // Bấm nút gửi
+  btnSend.addEventListener('click', function() {
+    const conversation_id = this.getAttribute("data-id");
+    console.log(conversation_id);
+    sendMessage(conversation_id);
+  } );
+
+  // Nhấn Enter để gửi
+  input.addEventListener('keydown', function(e) {
+    const conversation_id = this.getAttribute("data-id");
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      sendMessage(conversation_id);
+    }
+  });
+
+  // chuyển cuộc trò chuyện
+  document.querySelectorAll('.item-message').forEach(item => {
+    item.addEventListener('click', () => {
+      const id = item.dataset.id;
+      window.location.href = `/admin/messages/${id}`;
+      chatBox.scrollTop = chatBox.scrollHeight;
+    });
+  });
+</script>

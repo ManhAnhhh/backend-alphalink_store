@@ -46,6 +46,7 @@ const formatDateToYYYYMMDD = (dateInput) => {
 module.exports = async (req, res, next) => {
   res.locals.emailadminAcc = req.session.email;
   res.locals.fullNameLogin = req.session.fullName;
+  res.locals.userIdLogin = req.session.userId;
   res.locals.mostSoldProducts = await ProductModel.find().sort({ sold: -1 }).limit(10);
   res.locals.pendingOrders = await OrderModel.find({status: 'pending'}).sort({ createdAt : -1 });
   res.locals.formattedPriceVND = formattedPriceVND;

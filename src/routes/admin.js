@@ -99,6 +99,14 @@ router.get("/messages",
   // AuthMiddleware.checkAdmin,
   MessageController.index);
 
+router.get("/messages/:conversationId",
+  // AuthMiddleware.checkAdmin,
+  MessageController.getConversationById);
+
+router.post("/messages/send-message/:conversationId",
+  // AuthMiddleware.checkAdmin,
+  MessageController.sendMessage);
+
 // Route POST upload xử lý upload ảnh sản phẩm
 router.post("/upload", uploadProducts.single("img"), (req, res) => {
   if (req.file) {

@@ -4,6 +4,7 @@ const productsRouter = require("./products");
 const categoriesRouter = require("./categories");
 const customersRouter = require("./customers");
 const itemCustomer = require("./itemCustomer");
+const chatsRouter = require("./chat");
 
 const testController = require("../apps/controllers/api/test");
 
@@ -11,6 +12,7 @@ router.use("/products", productsRouter);
 router.use("/categories", categoriesRouter);
 router.use("/customers", customersRouter);
 router.use("/customer", itemCustomer);
+router.use("/chats", chatsRouter);
 
 router.get("/test", testController.test);
 router.post("/test", testController.postTest);

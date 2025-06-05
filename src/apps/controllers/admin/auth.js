@@ -11,7 +11,7 @@ const postLogin = async (req, res) => {
     req.session.fullName = user[0].fullName;
     req.session.email = email;
     req.session.password = password;
-    req.session.id = user[0]._id.toString();
+    req.session.userId = user[0]._id.toString();
     // console.log(req.session);
     res.redirect("/admin/dashboard");
   } else {
