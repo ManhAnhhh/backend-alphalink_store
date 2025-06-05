@@ -82,18 +82,18 @@ exports.order = async (req, res) => {
     await transporter.sendMail({
       from: `"Alphalink Store" <${process.env.MAIL_USER}>`, // sender address
       to: email, // list of receivers
-      subject: "Confirm to buy product from Alphalink Store ✔", // Subject line
+      subject: "Xác nhận mua sản phẩm từ Alphalink Store ✔", // Subject line
       html, // html body
     });
     return res.status(200).json({
       status: "success",
-      message: "Created Order Successfully",
+      message: "Tạo đơn hàng thành công",
       newItems,
     });
   } catch (err) {
     return res.status(500).json({
       status: "error",
-      message: "Server Error",
+      message: "Lỗi máy chủ",
       data: err.message || err,
     });
   }
@@ -160,7 +160,7 @@ exports.getOrdersByCustomerID = async (req, res) => {
   } catch (err) {
     return res.status(500).json({
       status: "error",
-      message: "Server Error",
+      message: "Lỗi máy chủ",
       data: err.message || err,
     });
   }
@@ -205,7 +205,7 @@ exports.cancelOrder = async (req, res) => {
   } catch (err) {
     return res.status(500).json({
       status: "error",
-      message: "Lỗi server",
+      message: "Lỗi máy chủ",
       data: err.message || err,
     });
   }

@@ -10,12 +10,12 @@ exports.deleteProductInCart = async (req, res) => {
     if (!customer)
       return res.status(404).json({
         status: "error",
-        message: "Customer not found",
+        message: "Khách hàng không tồn tại",
       });
     if (!productId)
       return res.status(404).json({
         status: "error",
-        message: "ProductId not found",
+        message: "Không tìm thấy mã sản phẩm",
       });
     const isProduct = customer.cart.some(
       (product) =>
@@ -24,7 +24,7 @@ exports.deleteProductInCart = async (req, res) => {
     if (!isProduct) {
       return res.status(404).json({
         status: "error",
-        message: "Product not found in cart",
+        message: "Không tìm thấy sản phẩm trong giỏ hàng",
       });
     }
     const result = await CustomerModel.findByIdAndUpdate(
@@ -34,13 +34,13 @@ exports.deleteProductInCart = async (req, res) => {
     );
     return res.status(200).json({
       status: "success",
-      message: "Product removed from cart successfully",
+      message: "Xóa sản phẩm khỏi giỏ hàng thành công",
       data: result.cart,
     });
   } catch (err) {
     return res.status(500).json({
       status: "error",
-      message: "Server Error",
+      message: "Lỗi máy chủ",
       data: err.message || err,
     });
   }
@@ -66,7 +66,7 @@ exports.addToCart = async (req, res) => {
     if (!customer) {
       return res.status(404).json({
         status: "error",
-        message: "Customer not found",
+        message: "Khách hàng không tồn tại",
       });
     }
     const cart = customer.cart;
@@ -80,7 +80,7 @@ exports.addToCart = async (req, res) => {
       );
       return res.status(200).json({
         status: "success",
-        message: "create cart successfully",
+        message: "Tạo giỏ hàng thành công",
         data: result.cart,
       });
     }
@@ -111,13 +111,13 @@ exports.addToCart = async (req, res) => {
 
     return res.status(200).json({
       status: "success",
-      message: "add to cart successfully",
+      message: "Thêm vào giỏ hàng thành công",
       data: result.cart,
     });
   } catch (err) {
     return res.status(500).json({
       status: "error",
-      message: "Server Error",
+      message: "Lỗi máy chủ",
       data: err.message || err,
     });
   }
@@ -134,7 +134,7 @@ exports.addManyItemsToCart = async (req, res) => {
     if (!customer) {
       return res.status(404).json({
         status: "error",
-        message: "Customer not found",
+        message: "Khách hàng không tồn tại",
       });
     }
 
@@ -171,7 +171,7 @@ exports.addManyItemsToCart = async (req, res) => {
       );
       return res.status(200).json({
         status: "success",
-        message: "repuchase items successfully",
+        message: "Tạo lại giỏ hàng thành công",
         data: result.cart,
       });
     }
@@ -208,12 +208,12 @@ exports.addManyItemsToCart = async (req, res) => {
 
     return res.status(200).json({
       data: result.cart,
-      message: "successfully",
+      message: "Thành công",
     });
   } catch (err) {
     return res.status(500).json({
       status: "error",
-      message: "Server Error",
+      message: "Lỗi máy chủ",
       err: err.message || err,
     });
   }
@@ -226,7 +226,7 @@ exports.updateCart = async (req, res) => {
     if (!cart) {
       return res.status(400).json({
         status: "error",
-        message: "Cart is required",
+        message: "Giỏ hàng là bắt buộc",
       });
     }
     const result = await CustomerModel.findByIdAndUpdate(
@@ -237,13 +237,13 @@ exports.updateCart = async (req, res) => {
 
     return res.status(200).json({
       status: "success",
-      message: "update cart successfully",
+      message: "Cập nhật giỏ hàng thành công",
       data: result.cart,
     });
   } catch (err) {
     return res.status(500).json({
       status: "error",
-      message: "Server Error",
+      message: "Lỗi máy chủ",
       data: err.message || err,
     });
   }
@@ -270,13 +270,13 @@ exports.deleteManyProductInCart = async (req, res) => {
     );
     return res.status(200).json({
       status: "success",
-      message: "delete items in cart successfully",
+      message: "Xóa sản phẩm khỏi giỏ hàng thành công",
       data: result.cart,
     });
   } catch (err) {
     return res.status(500).json({
       status: "error",
-      message: "Server Error",
+      message: "Lỗi máy chủ",
       data: err.message || err,
     });
   }

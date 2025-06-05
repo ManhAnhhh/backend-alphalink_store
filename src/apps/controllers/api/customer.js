@@ -29,7 +29,7 @@ exports.getCustomerByID = async (req, res) => {
     if (!customer)
       return res.status(404).json({
         status: "error",
-        message: "Customer not found",
+        message: "Khách hàng không tồn tại",
       });
     return res.status(200).json({
       status: "success",
@@ -38,7 +38,7 @@ exports.getCustomerByID = async (req, res) => {
   } catch (err) {
     return res.status(500).json({
       status: "error",
-      message: "Server Error",
+      message: "Lỗi máy chủ",
       data: err.message || err,
     });
   }
@@ -62,12 +62,12 @@ exports.updateCustomer = async (req, res) => {
     if (email != currentCustomer.email && isEmailExist)
       return res.status(400).json({
         status: "error",
-        message: "Email already exists",
+        message: "Email đã tồn tại",
       });
     if (phone != currentCustomer.phone && isPhoneExist)
       return res.status(400).json({
         status: "error",
-        message: "Phone already exists",
+        message: "Số điện thoại đã tồn tại",
       });
 
     
@@ -97,7 +97,7 @@ exports.updateCustomer = async (req, res) => {
   } catch (err) {
     return res.status(500).json({
       status: "error",
-      message: "Server Error",
+      message: "Lỗi máy chủ",
       data: err.message || err,
     });
   }
@@ -111,14 +111,14 @@ exports.registerCustomer = async (req, res) => {
     if (customer)
       return res.status(400).json({
         status: "error",
-        message: "Email already exists",
+        message: "Email đã tồn tại",
       });
 
     const isPhoneExist = await CustomerModel.findOne({ phone, role: 'customer'});
     if (isPhoneExist)
       return res.status(400).json({
         status: "error",
-        message: "Phone already exists",
+        message: "Số điện thoại đã tồn tại",
       });
 
     await new CustomerModel({
@@ -130,12 +130,12 @@ exports.registerCustomer = async (req, res) => {
 
     return res.status(201).json({
       status: "success",
-      message: "Registered successfully",
+      message: "Đăng ký thành công",
     });
   } catch (err) {
     return res.status(500).json({
       status: "error",
-      message: "Server Error",
+      message: "Lỗi máy chủ",
       data: err.message || err,
     });
   }
@@ -148,18 +148,18 @@ exports.loginCustomer = async (req, res) => {
     if (!customer) {
       return res.status(401).json({
         status: "error",
-        message: "Email incorrect",
+        message: "Email không chính xác",
       });
     }
     if (customer.password !== password) {
       return res.status(401).json({
         status: "error",
-        message: "Password incorrect",
+        message: "Mật khẩu không chính xác",
       });
     }
     return res.status(200).json({
       status: "success",
-      message: "Login successful",
+      message: "Đăng nhập thành công",
       data: {
         id: customer._id,
         fullName: customer.fullName,
@@ -173,7 +173,7 @@ exports.loginCustomer = async (req, res) => {
   } catch (err) {
     return res.status(500).json({
       status: "error",
-      message: "Server Error",
+      message: "Lỗi máy chủ",
       data: err.message || err,
     });
   }

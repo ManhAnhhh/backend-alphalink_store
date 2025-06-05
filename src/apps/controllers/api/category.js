@@ -37,7 +37,7 @@ const getCategory = async (req, res) => {
   } catch (err) {
     return res.status(500).json({
       status: "error",
-      message: "Server Error",
+      message: "Lỗi máy chủ",
       data: err.message || err,
     });
   }
@@ -68,7 +68,7 @@ const getProductsByCategory = async (req, res) => {
   } catch (err) {
     return res.status(500).json({
       status: "error",
-      message: "Server Error",
+      message: "Lỗi máy chủ",
       data: err.message || err,
     });
   }

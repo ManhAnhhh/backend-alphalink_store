@@ -17,7 +17,7 @@ exports.addHeartItem = async (req, res) => {
     if (!customer) {
       return res.status(404).json({
         status: "error",
-        message: "Customer not found",
+        message: "Khách hàng không tồn tại",
       });
     }
     const heart = customer.heart;
@@ -48,7 +48,7 @@ exports.addHeartItem = async (req, res) => {
   } catch (error) {
     return res.status(500).json({
       status: "error",
-      message: "Server Error",
+      message: "Lỗi máy chủ",
       data: err.message || err,
     });
   }
@@ -62,12 +62,12 @@ exports.deleteHeartItem = async (req, res) => {
     if (!customer)
       return res.status(404).json({
         status: "error",
-        message: "Customer not found",
+        message: "Khách hàng không tồn tại",
       });
     if (!productId)
       return res.status(404).json({
         status: "error",
-        message: "ProductId not found",
+        message: "ProductId không tồn tại",
       });
     const isProduct = customer.heart.some(
       (product) => product.prd_id === productId
@@ -75,7 +75,7 @@ exports.deleteHeartItem = async (req, res) => {
     if (!isProduct) {
       return res.status(404).json({
         status: "error",
-        message: "Product not found in heart",
+        message: "Sản phẩm không tồn tại trong danh sách yêu thích",
       });
     }
     const result = await CustomerModel.findByIdAndUpdate(
@@ -85,13 +85,13 @@ exports.deleteHeartItem = async (req, res) => {
     );
     return res.status(200).json({
       status: "success",
-      message: "Product removed from heart successfully",
+      message: "Xóa sản phẩm khỏi danh sách yêu thích thành công",
       data: result.heart,
     });
   } catch (err) {
     return res.status(500).json({
       status: "error",
-      message: "Server Error",
+      message: "Lỗi máy chủ",
       data: err.message || err,
     });
   }
@@ -111,13 +111,13 @@ exports.deleteManyProductInHeart = async (req, res) => {
     );
     return res.status(200).json({
       status: "success",
-      message: "delete items in heart successfully",
+      message: "Xóa sản phẩm khỏi danh sách yêu thích thành công",
       data: result.heart,
     });
   } catch (err) {
     return res.status(500).json({
       status: "error",
-      message: "Server Error",
+      message: "Lỗi máy chủ",
       data: err.message || err,
     });
   }

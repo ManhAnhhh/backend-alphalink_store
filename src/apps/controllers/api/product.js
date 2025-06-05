@@ -49,7 +49,7 @@ const getProductByID = async (req, res) => {
   } catch (err) {
     return res.status(500).json({
       status: "error",
-      message: "Server Error",
+      message: "Lỗi máy chủ",
       data: err.message || err,
     });
   }
@@ -98,7 +98,7 @@ const getProductsByCategoryName = async (req, res) => {
   } catch (err) {
     return res.status(500).json({
       status: "error",
-      message: "Server Error",
+      message: "Lỗi máy chủ",
       data: err.message || err,
     });
   }
@@ -133,7 +133,7 @@ const getCommentsByIdProduct = async (req, res) => {
   } catch (err) {
     return res.status(500).json({
       status: "error",
-      message: "Server Error",
+      message: "Lỗi máy chủ",
       data: err.message || err,
     });
   }

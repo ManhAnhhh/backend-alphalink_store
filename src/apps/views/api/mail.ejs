@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Confirm to buy products</title>
+    <title>Xác nhận mua hàng</title>
     <style>
       body {
         font-family: Arial, sans-serif;
@@ -65,26 +65,26 @@
     <div class="container" style="border: 1px solid #d6d7d7;">
       <div class="customer">
         <h2 class="title">
-          Confirm purchase at Alphalink Store
+          Xác nhận mua hàng tại Alphalink Store
         </h2>
-        <p>Customer: <b><%= fullName %></b></p>
+        <p>Khách hàng: <b><%= fullName %></b></p>
         <p>Email: <b><%= email %></b></p>
-        <p>Phone: <b><%= phone %></b></p>
-        <p>Address: <b><%= address %></b></p>
-        <p>Note: <b><%= note %></b></p>
-        <p>Voucher: <b><%= voucher %></b></p>
+        <p>Số điện thoại: <b><%= phone %></b></p>
+        <p>Địa chỉ nhận hàng: <b><%= address %></b></p>
+        <p>Ghi chú: <b><%= note %></b></p>
+        <p>Mã giảm giá: <b><%= voucher %></b></p>
       </div>
       <table class="items" style="width: 100%;">
         <thead>
           <tr>
             <th>
-              Products
+              Sản phẩm
             </th>
             <th>
-              Quantity
+              Số lượng
             </th>
             <th>
-              Price
+              Giá tiền
             </th>
           </tr>
         </thead>
@@ -110,12 +110,12 @@
                   $ <%= item.price - (item.price * item.discount ) / 100 %>
                 </p>
                 <p class="color">
-                  Color: <b><%= item.color[item.colorIndex] %></b>
+                  Màu sắc: <b><%= item.color[item.colorIndex] %></b>
                 </p>
               </div>
             </td>
             <td class="text-center">
-              <%= item.qty %>
+              x<%= item.qty %>
             </td>
             <td class="price">
               $ <%= item.price - (item.price * item.discount ) / 100 %>
@@ -125,28 +125,28 @@
 
           <tr class="total">
             <td colspan="3" class="price" style="text-align: right !important;">
-              Total cost of goods: $ <%= totalPriceInCart %>
+              Tổng tiền hàng: $ <%= totalPriceInCart %>
             </td>
           </tr>
 
           <tr class="total">
             <td colspan="3" class="price" style="text-align: right !important;">
-              Shipping fee: $ <%= deleveryPrice %>
+              Phí vận chuyển: $ <%= deleveryPrice %>
             </td>
           </tr>
 
           <tr class="total">
             <td colspan="3" class="price" style="text-align: right !important;">
-              Total: $ <%= totalPrice %>
+              Tổng cộng: $ <%= totalPrice %>
             </td>
           </tr>
         </tbody>
       </table>
 
       <p class="thanks">
-        Thank you for purchasing from our Shop, the delivery department will
-        contact you to confirm within 5 minutes of successful order and deliver
-        the goods to you within 24 hours at the latest.
+        Cảm ơn bạn đã mua hàng tại cửa hàng của chúng tôi, bộ phận giao hàng sẽ
+        liên hệ với bạn để xác nhận trong vòng 5 phút sau khi đặt hàng thành công và giao hàng
+        cho bạn chậm nhất trong vòng 2 đến 5 ngày làm việc.
       </p>
     </div>
   </body>
